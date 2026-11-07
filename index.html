@@ -1,0 +1,467 @@
+<!doctype html>
+<html lang="it">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Flashcard Sostenibilità</title>
+<style>
+:root{--bg:#f6f4ef;--card:#fff;--ink:#1f2a24;--muted:#66706a;--line:#dcd8cf;--acc:#2f6b4f;--acc2:#e7f0ea;--ok:#2f7d4f;--ko:#b5502f}
+@media (prefers-color-scheme:dark){:root{--bg:#141816;--card:#1e2420;--ink:#e8ece9;--muted:#9aa49e;--line:#333b36;--acc:#7cc3a0;--acc2:#24302a;--ok:#7cc3a0;--ko:#e59a7f}}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.5 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
+header{padding:20px 16px 8px;max-width:820px;margin:auto}
+h1{font-size:1.35rem;margin:0 0 4px}
+.sub{color:var(--muted);font-size:.9rem;margin:0}
+.bar{max-width:820px;margin:auto;padding:8px 16px;display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.chip{border:1px solid var(--line);background:var(--card);color:var(--ink);border-radius:999px;padding:6px 12px;font-size:.85rem;cursor:pointer}
+.chip.on{background:var(--acc);border-color:var(--acc);color:var(--bg)}
+.sp{flex:1}
+main{max-width:820px;margin:auto;padding:8px 16px 40px}
+.meta{display:flex;justify-content:space-between;color:var(--muted);font-size:.85rem;margin:8px 2px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:16px;min-height:300px;padding:24px;cursor:pointer;display:flex;flex-direction:column;justify-content:center;box-shadow:0 2px 10px rgba(0,0,0,.04)}
+.tag{font-size:.75rem;color:var(--acc);text-transform:uppercase;letter-spacing:.06em;margin-bottom:10px}
+.q{font-size:1.2rem;font-weight:600}
+.a{white-space:pre-line;margin-top:16px;padding-top:16px;border-top:1px dashed var(--line)}
+.hint{color:var(--muted);font-size:.85rem;margin-top:18px}
+.nav{display:flex;gap:8px;margin-top:14px;flex-wrap:wrap}
+.btn{flex:1;min-width:90px;border:1px solid var(--line);background:var(--card);color:var(--ink);border-radius:12px;padding:12px;font-size:.95rem;cursor:pointer}
+.btn.ok{border-color:var(--ok);color:var(--ok)}.btn.ko{border-color:var(--ko);color:var(--ko)}
+.list .item{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:16px;margin-bottom:12px}
+.list summary{cursor:pointer;font-weight:600}
+.list .a{margin-top:10px}
+.n{color:var(--muted);font-weight:400;margin-right:6px}
+.mark{font-size:.75rem;padding:2px 8px;border-radius:999px;margin-left:6px}
+.mark.k{background:var(--acc2);color:var(--ok)}.mark.r{background:var(--acc2);color:var(--ko)}
+h2.part{font-size:1.05rem;margin:22px 0 10px;color:var(--acc)}
+@media print{
+ header .sub,.bar,.nav,.meta,#flash{display:none!important}
+ body{background:#fff;color:#000;font-size:11pt}
+ #list{display:block!important}
+ .list .item{break-inside:avoid;border:1px solid #ccc}
+ .list details>.a{display:block}
+ h2.part{color:#2f6b4f;break-after:avoid}
+}
+</style>
+</head>
+<body>
+<header>
+<h1>Economia della Sostenibilità Ambientale</h1>
+<p class="sub">Flashcard e domande aperte · <span id="tot"></span> domande su tutte le 5 parti del riassunto. Tocca la carta per vedere la risposta.</p>
+</header>
+<div class="bar" id="parts"></div>
+<div class="bar">
+<button class="chip on" id="mFlash">Flashcard</button>
+<button class="chip" id="mList">Elenco domande</button>
+<span class="sp"></span>
+<button class="chip" id="shuffle">Mescola</button>
+<button class="chip" id="onlyR">Solo da ripassare</button>
+<button class="chip" id="reset">Azzera segni</button>
+</div>
+<main>
+<section id="flash">
+<div class="meta"><span id="pos"></span><span id="score"></span></div>
+<div class="card" id="card" tabindex="0">
+<div class="tag" id="tag"></div>
+<div class="q" id="q"></div>
+<div class="a" id="a" hidden></div>
+<div class="hint" id="hint">Prova a rispondere ad alta voce, poi tocca per girare la carta.</div>
+</div>
+<div class="nav">
+<button class="btn" id="prev">← Indietro</button>
+<button class="btn ko" id="bad">Da ripassare</button>
+<button class="btn ok" id="good">La so</button>
+<button class="btn" id="next">Avanti →</button>
+</div>
+</section>
+<section id="list" class="list" hidden></section>
+</main>
+<script>
+const PARTS = {
+  1: "Fondamenti teorici",
+  2: "Sostenibilità, clima, indicatori, acqua",
+  3: "Strumenti di politica ed EU ETS",
+  4: "Massarutto: economia ecologica e istituzioni",
+  5: "Trattati internazionali"
+};
+
+const CARDS = [
+// ───────── PARTE 1 ─────────
+[1,"Quali sono le tre domande dell'economia ambientale?",
+"1. Perché nascono i problemi ambientali? Perché il mercato non assegna un prezzo ai costi ambientali (chi inquina scarica il costo su altri).\n2. Quando un'allocazione è inefficiente? Quando si può migliorare la situazione di qualcuno senza peggiorare quella di nessuno.\n3. Quali strumenti la correggono? Strumenti di mercato (tasse, permessi), regolazione (standard, divieti) e negoziazione privata (Coase)."],
+[1,"Classifica i beni in base a rivalità ed escludibilità, con un esempio per ciascuno.",
+"• Rivale + escludibile → bene privato (mela, scarpe).\n• Rivale + non escludibile → bene comune (pesce in mare, falda): rischio sovrasfruttamento.\n• Non rivale + escludibile → bene di club (Netflix, autostrada a pedaggio).\n• Non rivale + non escludibile → bene pubblico (aria pulita, difesa, stabilità climatica): rischio sottoproduzione."],
+[1,"Perché il mercato produce troppo poca aria pulita?",
+"L'aria pulita è non rivale e non escludibile → nessuno può essere costretto a pagare → ognuno ha l'incentivo a fare il free rider → se tutti lo fanno nessuno contribuisce → il mercato ne produce meno del livello efficiente (troppo inquinamento). Per questo servono le politiche ambientali."],
+[1,"Perché l'economia ambientale è una disciplina recente?",
+"Per secoli l'ambiente è sembrato infinito: prezzo marginale zero, nessuna scarsità da gestire. Con la crescita del dopoguerra (anni '60-'70) l'economia si scontra con la capacità di carico degli ecosistemi: l'inquinamento diventa un vincolo macroeconomico globale e la natura passa da variabile esogena a endogena."],
+[1,"Collega alle date: Pigou, Samuelson, Coase, Hardin, Meadows, Brundtland, Pearce e Turner, Ostrom.",
+"• 1920 Pigou – esternalità, tassa a carico di chi inquina\n• 1954 Samuelson – beni pubblici\n• 1960 Coase – diritti di proprietà e negoziazione\n• 1968 Hardin – tragedia dei commons\n• 1972 Meadows – limiti alla crescita\n• 1987 Brundtland – sviluppo sostenibile\n• 1990 Pearce e Turner – capitale naturale, sostenibilità debole/forte\n• 2009 Ostrom, Nobel – gestione comunitaria dei beni comuni"],
+[1,"Cosa dicono le due leggi della termodinamica e quale conseguenza hanno per l'economia?",
+"• Prima legge: materia ed energia non si creano né si distruggono → ogni input esce come prodotto o come rifiuto: non si produce senza scarti.\n• Seconda legge: ogni trasformazione aumenta l'entropia e riduce l'energia disponibile.\nConseguenza: efficienza economica e sostenibilità fisica non coincidono; la tecnologia riduce le risorse per unità di PIL ma non elimina i limiti fisici."],
+[1,"Quando un'allocazione è efficiente? Spiega con l'esempio delle mele.",
+"Quando massimizza il surplus totale (consumatore + produttore): beneficio marginale = costo marginale.\nMele: equilibrio alla 3ª mela (valore 3 € = costo 3 €). Surplus consumatore 3 €, produttore 3 €, totale 6 € (massimo). La 4ª mela costerebbe 4 € e varrebbe 2 €: perdita di 2 €. Se ogni mela inquinasse la falda per 2 € non pagati, il mercato produrrebbe troppo."],
+[1,"Quali sono i quattro fallimenti di mercato e quale risultato produce ciascuno?",
+"• Esternalità negative → si produce troppo.\n• Beni comuni → sovrasfruttamento.\n• Beni pubblici → sottoproduzione (free riding).\n• Monopolio → si produce troppo poco a prezzo troppo alto (P > MC)."],
+[1,"Perché l'aria è il «caso centrale» dei fallimenti di mercato?",
+"Perché i fallimenti si sovrappongono: l'aria pulita è un bene pubblico (free rider), l'inquinamento è un'esternalità negativa e l'atmosfera è un bene comune con capacità limitata di assorbire emissioni."],
+[1,"Quali sono le tre proprietà di un sistema efficiente di diritti di proprietà? Fai un esempio di violazione.",
+"• Esclusività: costi e benefici ricadono sul proprietario (violazione: nessuno possiede il fiume, l'acciaieria non paga).\n• Trasferibilità: i diritti si scambiano e la risorsa va a chi la valuta di più (violazione: in mare aperto il diritto di pesca non esiste).\n• Applicabilità: i diritti sono protetti (violazione: discariche abusive vietate ma controlli e sanzioni deboli)."],
+[1,"Cos'è un'esternalità negativa? Scrivi la formula del costo sociale e spiega perché il mercato produce troppo.",
+"È un costo imposto a terzi e non compensato dal prezzo.\nMCs = MCp + DM (costo marginale sociale = privato + danno marginale).\nIl mercato produce dove P = MCp, ma l'efficienza è dove P = MCs; poiché MCp < MCs la quantità di mercato è maggiore di Q*."],
+[1,"Esercizio: MCp = 20 + 2Q, domanda P = 100 − 2Q, danno marginale 20 €. Trova equilibrio di mercato, ottimo, perdita secca e tassa.",
+"• Mercato: 100 − 2Q = 20 + 2Q → Q₁ = 20, P₁ = 60.\n• Costo sociale: MCs = 40 + 2Q.\n• Ottimo: 100 − 2Q = 40 + 2Q → Q* = 15, P₂ = 70.\n• Si producono 5 t di troppo; perdita secca = 5 × 20 / 2 = 50 €.\n• Tassa t = 20 € per tonnellata."],
+[1,"Cos'è un'esternalità positiva? Esempi e soluzioni.",
+"Un beneficio per terzi non pagato dal mercato: il beneficio marginale sociale supera quello privato → si produce troppo poco.\nEsempi: albero nel parco, ricerca imitabile, vaccini.\nSoluzioni: sussidi, incentivi fiscali, produzione pubblica."],
+[1,"Quali sono i tre regimi di proprietà delle risorse?",
+"• Proprietà statale (parchi, foreste pubbliche): rischi di pressioni politiche e orizzonte elettorale.\n• Proprietà comune: gestione di un gruppo definito, funziona con gruppo stabile e regole credibili.\n• Open access: chi prima arriva prende → tragedia dei commons."],
+[1,"Confronta Hardin e Ostrom sui beni comuni.",
+"• Hardin (1968): ogni pastore aggiunge una pecora perché il beneficio è suo e il costo è diviso → disastro collettivo. Soluzione: privatizzare o regolare. È un dilemma del prigioniero a un solo stadio, senza comunicazione.\n• Ostrom (Nobel 2009): esiste una terza via, la gestione comunitaria. È un gioco ripetuto con comunicazione: fiducia, reputazione e reciprocità (capitale sociale). Da qui la governance policentrica."],
+[1,"Quali condizioni rendono efficace la gestione comunitaria secondo Ostrom?",
+"• Confini chiari della risorsa e del gruppo\n• Regole adattate al contesto locale\n• Monitoraggio tra pari\n• Sanzioni graduali\n• Meccanismi di risoluzione dei conflitti\n• Riconoscimento da parte delle autorità esterne"],
+[1,"Caso del bisonte: cosa distingue lo sforzo efficiente E* da quello in open access EOA? Usa TB = 100E − E², TC = 10E.",
+"• E*: dove beneficio marginale = costo marginale → surplus massimo. 90 − 2E = 0 → E = 45; TB 2.475, TC 450, surplus 2.025.\n• EOA: si entra finché TB = TC (surplus zero, rendita dissipata). 90E − E² = 0 → E = 90; TB = TC = 900, surplus 0.\nIn open access lo sforzo raddoppia e il surplus si azzera."],
+[1,"Come si trova il livello efficiente di un bene pubblico? Esempio con PA = 10 − Q e PB = 15 − Q.",
+"Si sommano VERTICALMENTE le disponibilità a pagare (tutti consumano la stessa quantità): ΣWTP = MC.\nEsempio: fino a Q = 10, P = 25 − 2Q; oltre Q = 10 resta solo B: P = 15 − Q (curva spezzata).\nIl mercato non raggiunge Q*: preferenze non osservabili, prezzi non differenziabili, impossibile escludere → sottoproduzione."],
+[1,"Come sceglie la quantità un monopolista? Qual è l'effetto ambientale dell'OPEC?",
+"Monopolio: MR = MC, poi si legge il prezzo sulla domanda. Poiché MR < P produce meno e a prezzo più alto (perdita secca).\nOPEC: coordina le quantità come un monopolio. Effetto ambivalente: inefficienza allocativa, ma meno produzione fossile = meno emissioni (caso fortuito, non scelta di policy)."],
+[1,"Enuncia il teorema di Coase e spiega l'esempio acciaieria–resort.",
+"Se i diritti sono definiti con certezza, si contratta liberamente e senza costi e non ci sono asimmetrie informative, si raggiunge un esito efficiente qualunque sia chi detiene i diritti.\nEsempio: il resort subisce un danno di 100, l'acciaieria perderebbe 60 riducendo la produzione. Il resort offre 70: l'acciaieria accetta (70 > 60) e il resort guadagna 30. Cambia solo chi paga chi."],
+[1,"Perché il teorema di Coase quasi mai funziona per i problemi ambientali?",
+"• Soggetti coinvolti molto numerosi\n• Costi di transazione alti\n• Asimmetrie informative\n• Danno difficile da misurare\n• Free riding: ognuno aspetta che paghino gli altri\nAllora intervengono tribunali, regole di responsabilità e leggi."],
+[1,"Spiega la tassa pigouviana e quando è preferibile a Coase.",
+"La tassa modifica il costo marginale PRIVATO: CMP₂ = CMP₁ + t, con t = DM. Così costo privato = costo sociale, la quantità scende a Q₂ e la perdita secca sparisce (torna a valere il Primo Teorema del Benessere).\nCoase funziona con pochi soggetti; Pigou con molti, cioè nella maggior parte dei problemi ambientali reali."],
+[1,"Nel grafico della tassa sull'acciaio, cosa rappresentano ABCL, ABC, ABL e BCP₃P₂?",
+"• ABCL: danno ambientale evitato grazie alla tassa.\n• ABC: perdita di surplus privato dovuta alla tassa.\n• ABL: guadagno sociale netto (danno evitato al netto della perdita privata).\n• BCP₃P₂: gettito = t × Q₂.\nDopo la tassa il surplus privato è più piccolo, ma il benessere sociale netto aumenta di ABL."],
+[1,"Quali sono i quattro problemi della tassa pigouviana?",
+"1. Determinare la tassa ottimale: il danno varia nello spazio e nel tempo; la tassa controlla il prezzo, non la quantità.\n2. Entrata e uscita: se il gettito torna alle imprese attive diventa un sussidio a restare (meglio trasferimenti lump-sum).\n3. Potere di mercato: con monopolio t* = DM − m.\n4. Doppio dividendo: ambientale sicuro, fiscale (meno tasse sul lavoro) non garantito."],
+[1,"Perché con il monopolio la tassa ottimale è t* = DM − m?",
+"Con il monopolio P = MC + m (markup): la quantità è già troppo bassa e una tassa piena amplificherebbe la distorsione. Davis e Muehlegger (2010): negli USA il gas per le famiglie costa spesso oltre il 40% più del costo marginale, quindi una tassa piena sarebbe eccessiva."],
+[1,"Cosa dice il principio di equimarginalità? Spiega l'esempio con le imprese A e B.",
+"Un obiettivo si raggiunge al costo minimo solo se il costo marginale di abbattimento è uguale per tutte le imprese (MAC_A = MAC_B = tassa).\nObiettivo −100 t. A abbatte a 10 €/t (fino a 80 t); B: prime 20 t a 20 €, poi 50 €.\n• Standard uniforme 50 + 50: costo 500 + 1.900 = 2.400 €.\n• Tassa 30 €/t: A abbatte 80, B 20 → 800 + 400 = 1.200 €.\nStesso risultato ambientale, costo dimezzato."],
+[1,"Regolazione prescrittiva vs incentivi economici: vantaggi e limiti.",
+"• Command-and-control (filtri, limiti): certezza, immediatezza, semplicità; ma rigidità, costi alti, lo Stato deve conoscere tecnologie e costi.\n• Incentivi (tasse, permessi): flessibilità, costo complessivo minore, incentivo a innovare; ma serve misurare le emissioni. Tassa: quantità incerta. Permessi: prezzo incerto."],
+[1,"Quanto sono pigouviani accise sui carburanti, Area C, ERP di Singapore e tariffa puntuale?",
+"• Accise (672,9 € per 1.000 litri): pigouviane in modo grezzo, tassano il carburante non il danno; nate per fare gettito.\n• Area C Milano (7,50 €, traffico circa −30%): molto, tassa dove e quando si genera il danno, ma il prezzo non varia nel giorno.\n• ERP Singapore: prezzo che cambia con ora e traffico, la più pigouviana al mondo.\n• Tariffa puntuale rifiuti: in parte, tassa un proxy (la quantità)."],
+[1,"Cosa sono i fallimenti del governo? Elenca le cause.",
+"Il government failure si ha quando l'intervento pubblico non migliora l'efficienza o la peggiora. Cause: incentivi non allineati (rielezione), informazione incompleta (imprese che sovrastimano i costi), obiettivi multipli in conflitto, costi amministrativi, rent seeking, ignoranza razionale degli elettori."],
+[1,"Dove si può applicare una tassa ambientale? Vantaggi e limiti.",
+"• A monte (petrolio in raffineria): poche imprese, copertura quasi totale; il costo scende fino al consumatore.\n• A valle (CO₂ al camino): preciso; migliaia di impianti da monitorare, solo per grandi impianti (EU ETS).\n• Sul prodotto finale (accisa, tassa sui sacchetti): facile da riscuotere; non distingue produzione pulita e sporca.\nIn ogni caso conta la traslazione, che dipende dall'elasticità della domanda."],
+[1,"Cos'è il Social Cost of Carbon e perché le stime variano tanto?",
+"È il costo per la società di una tonnellata di CO₂ in più (in teoria t = DM). Stime: Nordhaus 2017 circa 35 $/t; EPA Obama 2015 circa 50 $; Stern 2006 circa 85 $; EPA Biden 2022 circa 190 $; carbon tax svedese 2024 circa 120 €/t.\nVariano per tasso di sconto, scenari climatici e valutazione dei danni."],
+[1,"Inquinanti globali e locali: differenze. Cos'è il GWP?",
+"• Globali (CO₂, CH₄, N₂O, gas fluorurati): il danno non dipende dal luogo.\n• Locali (PM, NOx, SO₂, ozono troposferico…): il danno dipende da dove, quando e quante persone sono esposte.\nGWP (Global Warming Potential): quanta energia intrappola un gas rispetto alla CO₂ in un periodo (di solito 100 anni); serve a esprimere tutto in CO₂ equivalente."],
+[1,"Come si può usare il gettito di una tassa ambientale?",
+"1. Ridurre altre tasse (doppio dividendo)\n2. Trasferimenti lump-sum ai cittadini (dividendo del carbonio, il meno distorsivo)\n3. Sussidi a tecnologie pulite (rischio picking winners)\n4. Permessi gratuiti alle imprese (evitano la delocalizzazione ma tengono in vita imprese inefficienti)\n5. Fondo sovrano per le generazioni future"],
+[1,"Cos'è il carbon leakage e quali soluzioni esistono?",
+"Se un solo paese tassa il carbonio, i costi salgono solo lì e le imprese si spostano: emissioni globali invariate e industria meno competitiva.\nSoluzioni: CBAM (l'UE tassa le importazioni in base al carbonio: acciaio, cemento, alluminio, fertilizzanti, elettricità, idrogeno) e club climatici di Nordhaus (2015)."],
+
+// ───────── PARTE 2 ─────────
+[2,"Confronta Pigou e Coase: chi agisce, strumento, informazione, quando funzionano.",
+"• Pigou: agisce lo Stato con una tassa pari al danno marginale; lo Stato deve conoscere il danno; funziona con molti inquinatori e danno misurabile (carbon tax, accise).\n• Coase: agiscono le parti private (con i tribunali) tramite diritti e negoziazione; le parti conoscono costi e benefici; funziona con poche parti e costi di transazione bassi (permessi, quote di pesca, EU ETS)."],
+[2,"Quali sono le quattro domande che l'efficienza non risolve?",
+"1. Il tempo: chi rappresenta le generazioni future?\n2. La scala: quanto può diventare grande l'economia?\n3. Irreversibilità e incertezza: come si misura in euro l'estinzione di una specie?\n4. La distribuzione: chi deve sopportare i costi?"],
+[2,"Quanto vale oggi un danno di 1 milione tra 100 anni con r = 5% e con r = 1,4%? Cosa dimostra?",
+"VA = 1.000.000 / (1 + r)^100.\nCon 5% circa 7.600 €; con 1,4% circa 249.000 €. Lo stesso danno pesa circa 30 volte di più o di meno: la scelta del tasso di sconto è anche etica."],
+[2,"Esempio delle due generazioni (20 unità, P = 8 − 0,4q, MC = 2, r = 10%): risultato e significato.",
+"Regola dell'efficienza dinamica: beneficio netto marginale oggi = valore attuale di quello di domani: 6 − 0,4q₁ = (6 − 0,4q₂)/1,1, con q₁ + q₂ = 20.\nRisultato: q₁ ≈ 10,24, q₂ ≈ 9,76; benefici ≈ 40,47 e 39,51 (contro 40 e 40 con divisione uguale).\nL'allocazione è efficiente ma non sostenibile: lo sconto fa pesare meno il futuro. Si rimedia investendo 0,466, ma il mercato non lo garantisce."],
+[2,"Cosa dice la regola di Hartwick?",
+"Il consumo può restare costante nel tempo se tutta la rendita delle risorse esauribili viene reinvestita in altro capitale. È come vivere degli interessi di un'eredità (Hartwick, 1977)."],
+[2,"Confronta economia ambientale ed economia ecologica.",
+"• Ambientale: l'economia è un sistema che a volte sbaglia i prezzi; domanda: livello ottimo di inquinamento; capitale naturale sostituibile (sostenibilità debole); valore in moneta; strumenti: tasse, permessi, diritti. Autori: Pigou, Coase, Solow, Hartwick, Nordhaus.\n• Ecologica: l'economia è un sottosistema della biosfera finita; domanda: scala massima sostenibile; capitale naturale in parte insostituibile (forte); anche unità fisiche e soglie. Autori: Daly, Boulding, Georgescu-Roegen, Costanza.\nSono complementari: la seconda fissa i limiti, la prima ottimizza dentro."],
+[2,"Cosa sono allocazione, distribuzione e scala secondo Daly? Spiega l'esempio della nave.",
+"• Scala: quanto può essere grande il flusso di materia ed energia (criterio: sostenibilità).\n• Distribuzione: come dividere risorse e costi (equità).\n• Allocazione: come dividere le risorse tra usi (efficienza).\nIl mercato bilancia bene il carico nella stiva, ma una nave ben bilanciata affonda se è troppo carica: serve la linea di Plimsoll. Ordine: prima scala, poi distribuzione, infine allocazione."],
+[2,"Cosa significa «prima il limite, poi il prezzo»? Fai due esempi.",
+"1. Limite scientifico (con danni irreversibili e incerti: standard minimo di sicurezza).\n2. Distribuzione: a chi vanno diritti o gettito.\n3. Strumento: tasse o permessi rispettano il limite al costo minimo (approccio standard e prezzi, Baumol e Oates 1971).\nEsempi: quote di pesca (cattura fissata dai biologi, quote trasferibili); EU ETS (tetto, permessi gratis o all'asta, scambio)."],
+[2,"Crescita e sviluppo sono la stessa cosa? Lo sviluppo sostenibile è un ossimoro?",
+"Crescita = più beni e servizi (PIL); sviluppo = migliore qualità della vita. Si può avere crescita senza sviluppo (ricostruzione dopo l'alluvione del 2023) e sviluppo con poca crescita.\n• Latouche: se sviluppo = crescita materiale, è una contraddizione.\n• Daly: se sviluppo = miglioramento qualitativo, la contraddizione sparisce."],
+[2,"Quali sono i due concetti chiave della definizione Brundtland e il suo limite?",
+"• Bisogni: priorità ai bisogni essenziali dei più poveri (giustizia intragenerazionale).\n• Limiti: gli ecosistemi hanno capacità finita, che dipende anche da tecnologia e organizzazione sociale.\nUnisce equità nel presente e responsabilità verso il futuro, ma è vaga: non dice quali bisogni contano né quanto fidarsi della tecnologia."],
+[2,"Quali sono i quattro tipi di capitale?",
+"• Naturale: risorse e servizi degli ecosistemi.\n• Fisico/prodotto: macchinari, infrastrutture, edifici.\n• Umano: conoscenze, istruzione, salute (Becker: mezzo per il reddito; Sen: capabilities, il fine è la libertà).\n• Sociale: fiducia, norme, reti, istituzioni (Coleman, Putnam)."],
+[2,"Quali sono le quattro categorie di servizi ecosistemici? Perché vengono sovrasfruttati?",
+"Millennium Ecosystem Assessment (2005): approvvigionamento (cibo, acqua, legname), regolazione (clima, impollinazione, depurazione), culturali (paesaggio, turismo), supporto (suolo, cicli dei nutrienti).\nMolti sono beni pubblici o comuni senza prezzo. Es.: l'impollinazione vale 235-577 miliardi di $ l'anno e nessuno paga le api."],
+[2,"Cosa misura il programma CWON della Banca Mondiale e cosa ha trovato?",
+"Misura la ricchezza come somma di capitale prodotto, naturale rinnovabile, naturale non rinnovabile e umano: lo sviluppo è sostenibile se la ricchezza reale pro capite non diminuisce.\n1995-2020: ricchezza pro capite +21%; capitale umano circa 60%; capitale naturale rinnovabile oltre −20% pro capite ovunque; oltre un quarto dei paesi ha PIL in crescita ma ricchezza in calo. Limite: assume alta sostituibilità (sostenibilità debole)."],
+[2,"Cos'è il reddito di Hicks? Spiega con un esempio numerico.",
+"È il massimo che si può consumare restando ricchi come all'inizio. Con 10.000 € al 10% si possono spendere 1.000 € l'anno per sempre; spendendone 1.500 il capitale scende (9.500, 8.950, 8.345…) e finisce in circa 12 anni. Il PIL è un flusso e non sottrae il consumo degli stock naturali."],
+[2,"Esempio della pesca: stock 1.000 t, rigenerazione 200 t/anno. Cosa succede pescandone 200 o 350?",
+"Con 200 t lo stock resta costante. Con 350 t (accesso libero) scende a 850, 700, 550, 400, 250, 100 e crolla al 7° anno. In accesso libero ognuno confronta il beneficio medio con il costo e la rendita è dissipata (Gordon, 1954)."],
+[2,"Sostenibilità debole e forte: differenze, regole, indicatori.",
+"• Debole (tecnocentrica): si conserva il valore del capitale totale; capitali sostituti; ΔKp + ΔKh + ΔKn ≥ 0; indicatore: risparmio netto aggiustato; rischio: caso Nauru.\n• Forte (biocentrica): si conserva il capitale naturale, almeno quello critico; capitali complementari; ΔKn ≥ 0; indicatori: impronta ecologica, confini planetari; rischio: costi molto alti.\nTutto dipende dalla sostituibilità."],
+[2,"Come si calcola il risparmio netto aggiustato e cosa significa se è negativo?",
+"RNA = risparmio lordo − ammortamento + spesa in istruzione − risorse consumate − danni da inquinamento.\nSe è negativo per molti anni il paese si impoverisce (indicatore di sostenibilità debole)."],
+[2,"Cosa insegna il caso Nauru?",
+"L'isola ha estratto fosfati per circa un secolo distruggendo gli ecosistemi e ha creato un fondo da oltre 1 miliardo di $. In senso debole sembrava sostenibile, ma l'isola è in gran parte inutilizzabile e la strategia non è replicabile. La sostenibilità debole è necessaria ma non sempre sufficiente."],
+[2,"Cobb-Douglas e Leontief: cosa dicono sulla sostituibilità?",
+"• Cobb-Douglas Y = K^0,5·L^0,3·R^0,2: capitali sostituti (debole). Se R si dimezza, K deve crescere del 32%; se R scende all'1%, K deve diventare circa 6,3 volte più grande.\n• Leontief Y = min(K/a, R/b): complementi (forte). Se R si dimezza, Y si dimezza qualunque sia K.\nPer risorse specifiche la sostituzione spesso funziona; per clima, cicli biogeochimici e biodiversità è impossibile o troppo rischiosa."],
+[2,"Due esempi di sostenibilità forte.",
+"• Ozono: nessun sostituto; il Protocollo di Montreal (1987) fissa limiti fino all'eliminazione dei CFC (prima il limite, poi il prezzo).\n• Impollinazione a mano nel Sichuan: possibile, ma solo con moltissimo lavoro e su piccola scala."],
+[2,"Triple Bottom Line e Agenda 2030: a chi si rivolgono e cosa prevedono?",
+"• Triple Bottom Line (Elkington 1994): alle imprese; Profit, People, Planet; volontaria (oggi obblighi CSRD per grandi imprese).\n• Agenda 2030 (2015, 193 Stati): ai governi; 17 SDG e 169 target; principi universalità, integrazione, inclusione; le 5P: People, Planet, Prosperity, Peace, Partnership.\nRapporto ONU 2026: solo il 36% dei target è in linea o in moderato progresso, il 15% è sotto il 2015."],
+[2,"Malthus, Ricardo e Mill: che limite vedeva ciascuno?",
+"• Malthus (1798): popolazione in progressione geometrica, cibo aritmetica → carestie; limite fisico assoluto (smentito da tecnologia e transizione demografica).\n• Ricardo (1817): si coltivano terre meno fertili, rendite su, profitti giù; il cibo c'è ma costa sempre di più (limite economico).\n• Mill (1848): lo stato stazionario non è una catastrofe; la società può migliorare in qualità."],
+[2,"Perché per il DDT si è scelto un divieto e non una tassa?",
+"Silent Spring (Carson, 1962) mostra che il DDT è persistente e si accumula nella catena alimentare. Il danno è incerto, cumulativo, in parte irreversibile e le vittime moltissime: è un caso di standard minimo di sicurezza. Divieto USA 1972; la Convenzione di Stoccolma ne consente ancora l'uso contro la malaria."],
+[2,"Cowboy economy e spaceship economy (Boulding, 1966).",
+"• Cowboy: sistema aperto, risorse abbondanti, i rifiuti spariscono altrove, esternalità rare, obiettivo massimizzare produzione e consumo.\n• Spaceship: sistema chiuso, risorse scarse, i rifiuti restano a bordo, esternalità ovunque, obiettivo mantenere lo stock con il minimo flusso. Pigou e Coase sono necessari ma non sufficienti."],
+[2,"Spiega I = P × A × T con l'esempio dei rifiuti.",
+"Impatto = popolazione × consumo pro capite × tecnologia (Ehrlich e Holdren, 1971).\n60 milioni × 30.000 € × 0,016 kg/€ = 28,8 milioni di t di rifiuti l'anno (480 kg pro capite). Se A cresce del 2% e P è fermo, T deve scendere di circa il 2% l'anno per non aumentare l'impatto."],
+[2,"Cosa dice The Limits to Growth (1972)?",
+"Il Club di Roma commissiona al MIT (Donella Meadows) il modello World3 con cinque variabili: popolazione, industrializzazione, cibo, risorse non rinnovabili, inquinamento. Non dice che il collasso è inevitabile, ma che la crescita esponenziale non può durare in un pianeta finito. Propone di stabilizzare la popolazione, ridurre l'uso di risorse e controllare l'inquinamento."],
+[2,"Georgescu-Roegen: entropia e modello fondi-flussi.",
+"Il processo economico è a senso unico: entrano risorse a bassa entropia, escono rifiuti ad alta entropia (il riciclo al 100% è impossibile).\nFondi (capitale, lavoro, terra) = agenti che trasformano; flussi (materia, energia) = ciò che viene trasformato. I fondi non sostituiscono i flussi: più cuochi e forni non fanno una torta più grande senza farina e uova. Anche con prezzi perfetti il problema resta il volume del flusso."],
+[2,"Quali sono le tre regole operative di Daly?",
+"1. Rinnovabili: prelievo non superiore alla rigenerazione.\n2. Non rinnovabili: consumo non superiore allo sviluppo di sostituti rinnovabili.\n3. Inquinamento: emissioni non superiori alla capacità di assorbimento.\nDaly non è contro il mercato: tetto al prelievo (scala), quote all'asta e scambio (allocazione), gettito (distribuzione)."],
+[2,"Cos'è l'Antropocene e qual è lo stato del dibattito?",
+"Termine di Crutzen: l'umanità diventa una forza geologica dopo l'Olocene (stabile per circa 11.700 anni). Ipotesi di inizio: Rivoluzione industriale o Grande accelerazione degli anni '50. Nel marzo 2024 l'IUGS ha confermato il voto contrario al riconoscimento formale, ma il termine resta molto usato."],
+[2,"Decrescita e green economy: in cosa differiscono?",
+"• Decrescita (Latouche): riduzione volontaria e organizzata del consumo materiale, programma delle 8 R (rivalutare, riconcettualizzare, ristrutturare, ridistribuire, rilocalizzare, ridurre, riutilizzare, riciclare). Punto debole: lavoro e paesi poveri.\n• Green economy (UNEP 2011): la crescita va ripensata; obiettivo decoupling."],
+[2,"Decoupling relativo e assoluto: differenza ed esempio.",
+"• Relativo: PIL +3%, rifiuti +1% → l'impatto totale cresce comunque.\n• Assoluto: PIL +2%, rifiuti −1% → l'impatto totale scende.\nConta solo quello assoluto e abbastanza rapido; Haberl et al. (2020) trovano casi reali ma rari e lenti. Dal 1990 in UE e USA il PIL cresce e la CO₂ scende; in Cina crescono entrambi."],
+[2,"Perché il clima è «il più grande fallimento di mercato mai visto» (Stern)?",
+"• Globale: una tonnellata fa lo stesso danno ovunque → cooperazione e free riding.\n• Di lungo periodo: i gas restano per decenni o secoli → il tasso di sconto è decisivo.\n• Incerto e irreversibile: tipping points → prudenza.\n• Su larga scala: coinvolge quasi tutta l'economia."],
+[2,"Inquinante di flusso e di stock: perché la CO₂ richiede lo zero netto? (metafora della vasca)",
+"Flusso: assorbito in fretta, conta l'emissione di oggi. Stock: si accumula, conta la quantità accumulata. La CO₂ è in gran parte di stock.\nVasca: entrano circa 42 Gt/anno, lo scarico (oceani ed ecosistemi) ne toglie circa metà → il livello sale di circa 21 Gt (≈2,7 ppm). Concentrazione: 280 ppm prima del 1750, 424 ppm nel 2024. Tagliando del 20% il livello sale ancora: si ferma solo con emissioni nette zero."],
+[2,"Cosa sono i tipping points? Due esempi.",
+"Soglie superate le quali i cambiamenti diventano rapidi e difficilmente reversibili.\n• Permafrost: sciogliendosi rilascia metano e CO₂ → più riscaldamento (feedback positivo).\n• Groenlandia: la fusione totale alzerebbe il mare di circa 7 m; meno ghiaccio = superficie più scura che assorbe più calore.\nL'incertezza sulla soglia rende più difficile il coordinamento."],
+[2,"Definisci il costo sociale del carbonio. Calcola lo SCC per tre danni da 100 € (tra 10, 50, 100 anni) con r = 1%, 3%, 5%.",
+"SCC = valore attuale di tutti i danni futuri di una tonnellata in più emessa oggi: SCC = D₁/(1+r) + D₂/(1+r)² + …; la carbon tax ottimale è uguale allo SCC.\nRisultati: r = 1% → 188,30 €; r = 3% → 102,42 €; r = 5% → 70,87 €. Più alto il tasso di sconto, più basso lo SCC."],
+[2,"Scrivi la regola di Ramsey e confronta Stern e Nordhaus.",
+"r = ρ + η × g (ρ preferenza temporale pura, η elasticità dell'utilità marginale, g crescita del consumo).\n• Stern: ρ 0,1%, η 1, g 1,3% → r = 1,4%; 1.000 € tra 100 anni valgono circa 249 €; tagli forti e immediati; motivazione etica.\n• Nordhaus: ρ 1,5%, η 2, g 2% → r = 5,5%; valgono circa 4,7 €; carbon tax a rampa; coerenza con i tassi di mercato.\nÈ una scelta di valore."],
+[2,"Come si trova il livello ottimale di abbattimento con SCC = 60 €/t?",
+"Si abbatte finché il costo marginale è minore del danno evitato. Con costi marginali 20, 40, 60, 80, 100 €/t per ogni Gt: conviene fino alla 3ª Gt (60 = 60, ottimo); oltre no. Con una carbon tax di 60 €/t si arriva all'ottimo senza conoscere i costi delle singole imprese."],
+[2,"Cosa mostra l'esperimento di Jacquet (2013)?",
+"Gruppi con denaro reale devono investire per evitare una «catastrofe». Se il premio arriva il giorno dopo coopera il 70% dei gruppi; dopo 7 settimane il 36%; se va alle generazioni future, nessuno. Nel clima i costi sono immediati e i benefici lontani."],
+[2,"Mitigazione, adattamento e climate engineering: differenze ed esempi.",
+"• Mitigazione → agisce sulle cause: rinnovabili, efficienza, trasporti puliti, riforestazione.\n• Adattamento → sugli effetti: dighe, colture resistenti, allerta, sanità.\n• Climate engineering → sul sistema climatico: rimozione della CO₂ (riforestazione, biochar, BECCS, DACCS…) e gestione della radiazione solare (aerosol in stratosfera, con rischi: monsoni, acidificazione non risolta, geopolitica)."],
+[2,"Agire subito o aspettare? Spiega hedging e asimmetria del rischio.",
+"Non sappiamo quanto il clima reagisca alla CO₂. Wait and see = aspettare; hedging = ridurre moderatamente subito. Conviene l'hedging: se la sensibilità è alta e si è aspettato, recuperare costa moltissimo; se è bassa e si è agito, si è speso poco più del necessario. Yohe (2004): l'incertezza rafforza le ragioni per agire presto."],
+[2,"Cosa prevede l'Accordo di Parigi e quali tagli servono secondo l'IPCC?",
+"Ben sotto 2 °C, sforzi per 1,5 °C; zero netto nella seconda metà del secolo; NDC ogni 5 anni; Global Stocktake ogni 5 anni (primo 2023).\nIPCC rispetto al 2019: per 1,5 °C −43% al 2030, −60% al 2035, −84% al 2050, zero netto di CO₂ nei primi anni '50; per 2 °C −21%, −35%, −64%, zero netto nei primi anni '70.\nUNEP 2025: politiche attuali circa 2,8 °C; nuovi NDC 2,3-2,5 °C."],
+[2,"Quali sono gli obiettivi climatici dell'UE e la situazione dell'Italia?",
+"UE (sul 1990): almeno −55% al 2030; −90% al 2040; neutralità climatica al 2050. Nel 2024 era a circa −37%.\nItalia: poco più di 360 Mt CO₂eq nel 2024 (circa −30% sul 1990); trasporti 31% e ancora oltre il 10% sopra il 1990; obiettivo Effort Sharing −43,7% al 2030 sul 2005; piano di adattamento PNACC dal 2023."],
+[2,"Perché il PIL non basta come indicatore? Esempio della falda.",
+"Per il capitale costruito si sottrae l'ammortamento, per quello naturale no. Una falda si ricarica di 100.000 m³ e se ne prelevano 150.000: il PIL conta tutti i 150.000, ma solo 100.000 sono reddito (Hicks); 50.000 sono capitale consumato. Servono indicatori che guardino allo stock."],
+[2,"Spiega lo schema DPSIR con l'esempio dell'acqua.",
+"• D Determinanti: agricoltura, popolazione, industria\n• P Pressioni: prelievi, azoto, BOD\n• S Stato: ossigeno disciolto, nitrati\n• I Impatti: morie di pesci, costi di potabilizzazione\n• R Risposte: Direttiva Quadro Acque, depuratori, tariffe\nUna politica (R) agisce sulle pressioni (P) per migliorare lo stato (S)."],
+[2,"Cosa sono i confini planetari e quanti sono superati?",
+"Rockström et al. (2009): nove processi che tengono stabile il pianeta; dentro c'è uno spazio operativo sicuro (sostenibilità forte, fissa la scala di Daly).\nSuperati 7 su 9 (2026): clima, biosfera, uso del suolo, acqua dolce, azoto e fosforo, nuove entità, acidificazione degli oceani (dal 2025). Entro il limite: ozono e aerosol. Il recupero dell'ozono mostra che un limite globale può funzionare."],
+[2,"Cos'è l'impronta ecologica e come si calcola?",
+"Superficie di terra e acqua necessaria per produrre ciò che si consuma e assorbire i rifiuti (Wackernagel e Rees).\n1. Consumo = produzione + importazioni − esportazioni\n2. Ettari = consumo ÷ resa media mondiale\n3. Ettari globali = ettari × fattore di equivalenza (coltivazioni 2,5; foreste 1,3; pascoli 0,5; mare 0,4)\n4. CO₂: foresta necessaria ad assorbirla\n5. Somma e confronto con la biocapacità."],
+[2,"Esempio: paese di 400 abitanti con grano, legname e CO₂. Calcola l'impronta e il deficit.",
+"• Grano 1.000 t ÷ 4 t/ha = 250 ha × 2,5 = 625 gha\n• Legname 600 m³ ÷ 2 = 300 ha × 1,3 = 390 gha\n• CO₂ 1.125 t ÷ 2,5 = 450 ha × 1,3 = 585 gha\nTotale 1.600 gha = 4 gha pro capite. Con biocapacità 1.000 gha deficit di 600: debitore ecologico."],
+[2,"Come si calcola l'Overshoot Day? Valori del mondo e dell'Italia nel 2025.",
+"Earth Overshoot Day = (biocapacità ÷ impronta) × 365.\nMondo 2025: 1,78 pianeti → 365 ÷ 1,78 ≈ 205 giorni = 24 luglio.\nItalia 2025: 6 maggio, dopo 126 giorni → circa 2,9 pianeti.\nSi anticipa per crescita di popolazione, consumi ed energia fossile."],
+[2,"Quali sono i limiti dell'impronta ecologica? Come si confronta con i confini planetari?",
+"Limiti: componente carbonio ipotetica (circa 61%); senza carbonio l'impronta mondiale è vicina alla biocapacità; misura solo superfici (non chimica, biodiversità, acqua); fattori di equivalenza arbitrari; penalizza paesi densi e commercio; non misura il benessere né indica politiche.\nImpronta = un conto in un solo numero; confini = nove limiti non sommabili basati su soglie. Insieme: tetto sicuro + quanto ciascuno ne usa."],
+[2,"Come si calcola la CO₂ equivalente? Esempio dell'azienda zootecnica.",
+"CO₂e = Σ (emissioni di ogni gas × GWP). GWP a 100 anni: CO₂ 1; CH₄ non fossile 27 (fossile circa 30); N₂O 273.\n50 t CO₂ + 10 t CH₄ × 27 + 1 t N₂O × 273 = 50 + 270 + 273 = 593 t CO₂e. La CO₂ è solo l'8%."],
+[2,"Cos'è la carbon footprint? Cosa sono Scope 1, 2 e 3?",
+"Totale delle emissioni di gas serra dirette e indirette di persona, prodotto, impresa o paese.\n• Scope 1: emissioni dirette (caldaie, veicoli, processi)\n• Scope 2: elettricità e calore acquistati\n• Scope 3: resto della catena del valore, spesso la parte più grande\nPer i prodotti: LCA (ISO 14067), dalla culla alla tomba."],
+[2,"Quali sono gli indicatori di stato del clima?",
+"• CO₂: circa 280 ppm preindustriale, circa 426 ppm nel 2025 (+3,5 ppm 2023-2024, record).\n• Temperatura sul 1850-1900: +1,26 °C nel 2016-2025.\n• Il 2024 è il primo anno sopra 1,5 °C (circa +1,55), ma Parigi riguarda medie di circa 20 anni.\n• Velocità: circa 0,27 °C per decennio."],
+[2,"Spiega le tre componenti della water footprint e la formula dell'acqua grigia.",
+"• Verde: pioggia usata dalle piante.\n• Blu: acqua da fiumi, laghi, falde (irrigazione).\n• Grigia: acqua teorica per diluire gli inquinanti: WF grigia = L ÷ (cmax − cnat).\nEsempio 1 ha di grano (5 t): verde 3.000 m³, blu 1.000, grigia 15 kg di azoto ÷ 10 mg/l = 1.500 m³ → totale 5.500 m³ = 1.100 litri/kg. Concetto di acqua virtuale: Allan (1993); water footprint: Hoekstra (2002)."],
+[2,"Il ciclo dell'acqua conserva la quantità: perché allora l'acqua è scarsa?",
+"Solo il 2,5% è dolce e lo 0,3% facilmente accessibile. Cinque fattori:\n1. Dove (bisogni locali)\n2. Quando (piove d'inverno, serve d'estate)\n3. Forma (salata o inaccessibile)\n4. Velocità (falde che si ricaricano in secoli)\n5. Qualità (inquinamento)\nScarsità fisica: prelievi oltre il 75% dei flussi; scarsità economica: l'acqua c'è ma mancano infrastrutture e istituzioni."],
+[2,"Fonti puntuali e non puntuali di inquinamento idrico.",
+"• Puntuali: scarico in un punto preciso (industria, fognature); facili da monitorare, molto ripulite.\n• Non puntuali: contaminazione diffusa (deflusso di fertilizzanti e pesticidi, deposizioni atmosferiche); difficili da controllare e trascurate a lungo, oggi oltre metà del carico."],
+[2,"Fund, stock e persistent pollutants: differenze, strumenti ed esempi.",
+"• Fund: assimilati se il carico è moderato; danno dagli scarichi di oggi; tasse o permessi (BOD); es. rifiuti organici, calore, nutrienti.\n• Stock: non assimilati, si accumulano; colpiscono anche le generazioni future; standard severi, divieti, bonifiche; es. mercurio, piombo, cadmio.\n• Persistent: quasi nessuna assimilazione, bioaccumulo nella catena alimentare; divieti; es. pesticidi, PFAS, farmaci."],
+[2,"Cosa sono DO, BOD, oxygen sag ed eutrofizzazione?",
+"• DO: ossigeno disciolto nell'acqua.\n• BOD: ossigeno che verrà consumato per decomporre la materia organica.\n• Oxygen sag: punto in cui l'ossigeno è al minimo (punto critico).\n• Eutrofizzazione: crescita eccessiva di alghe causata da azoto e fosforo.\nTroppi rifiuti organici → batteri consumano ossigeno → morie di pesci, acqua anaerobica."],
+[2,"Perché nella politica dell'acqua domina il command-and-control? Successi e fallimenti.",
+"Fonti diffuse difficili da misurare, impatto che dipende dal luogo, mercati piccoli (un bacino), costi di transazione alti → il trading è difficile.\nSuccessi: bonifica delle fonti puntuali. Fallimenti: scarico zero entro il 1985 (Clean Water Act) irrealistico; fonti diffuse ignorate; standard uniformi inefficienti."],
+[2,"Cosa prevede la Direttiva Quadro Acque e come è applicata in Italia?",
+"Direttiva 2000/60/CE: buono stato ecologico e chimico di tutte le acque; gestione per bacino idrografico; monitoraggio e 5 classi; recupero dei costi e «chi inquina paga»; piani di gestione.\nItalia: D.Lgs. 152/2006; sistema multilivello UE-Stato-Regioni; prevale il command-and-control. Criticità in agricoltura: misurazione incompleta, prezzo poco legato al consumo, sistema frammentato."],
+
+// ───────── PARTE 3 ─────────
+[3,"Quali sono le principali famiglie di strumenti di politica ambientale e chi decide cosa?",
+"• Regolazione diretta: lo Stato fissa limiti o tecnologie (standard, BAT).\n• Strumenti di prezzo: lo Stato fissa quanto costa inquinare, le imprese decidono quanto ridurre (carbon tax).\n• Strumenti di quantità: lo Stato fissa il totale, il mercato decide prezzo e chi riduce (cap-and-trade).\n• Altri: sussidi, etichette, accordi volontari, responsabilità per danno.\nNessuno strumento vince su tutti i criteri → policy mix."],
+[3,"Quali tipi di standard esistono? Punto di forza e punto debole.",
+"Tipi: di emissione/performance (g CO₂/km), tecnologico (BAT, marmitta catalitica), di qualità ambientale (limiti di PM10), divieto (CFC).\nForza: semplicità, il limite è rispettato o no. Debolezza: lo stesso limite per imprese con costi diversi viola l'equimarginalità; una volta rispettato non c'è motivo di fare di più."],
+[3,"Confronta gli incentivi a innovare di standard, tassa e permessi.",
+"• Standard: ridurre oltre il limite non fa guadagnare nulla (rischio di limite più severo).\n• Tassa: ogni tonnellata in meno fa risparmiare la tassa.\n• Permessi all'asta: ogni tonnellata in meno è un permesso da vendere o da non comprare; l'incentivo cala se il prezzo scende.\nMilliman e Prince (1989): tasse e aste in cima, standard in fondo."],
+[3,"Quando la regolazione diretta è la scelta migliore?",
+"• Sostanze molto pericolose → divieto (CFC, piombo, amianto)\n• Inquinanti locali e hot spot (il danno dipende dal luogo)\n• Monitoraggio difficile → si impone una tecnologia facile da controllare\n• Energy efficiency gap: chi compra sottovaluta i risparmi energetici futuri"],
+[3,"Descrivi la carbon tax svedese e i suoi effetti.",
+"Introdotta nel 1991 a 250 corone/t (circa 23 €), nel 2026 a 1.520 corone/t (circa 138 €), con aumenti graduali e annunciati; gettito al bilancio generale.\nAndersson (2019), controllo sintetico: emissioni dei trasporti −6%. La domanda di benzina reagisce alla tassa circa 3 volte più che a un aumento di mercato, perché la tassa è percepita come permanente."],
+[3,"Come funzionano i permessi negoziabili? Cosa dimostra Montgomery (1972)?",
+"1. Cap: lo Stato fissa le emissioni totali (1 permesso = 1 t).\n2. Distribuzione: gratis (storico o benchmark) o all'asta.\n3. Obbligo: si consegnano tanti permessi quante tonnellate emesse.\n4. Scambio: chi riduce a basso costo vende, chi ha costi alti compra → prezzo unico, risultato costo-efficace.\nMontgomery: qualunque sia la distribuzione iniziale lo scambio porta allo stesso risultato efficiente (applicazione di Coase)."],
+[3,"Prezzi o quantità? Spiega il teorema di Weitzman (1974) e l'applicazione al clima.",
+"Senza incertezza tassa e cap si equivalgono. Con incertezza sui costi di abbattimento:\n• danno marginale relativamente piatto → meglio la tassa;\n• danno marginale ripido → meglio il cap.\nCO₂ = inquinante di stock: nel breve il danno marginale è quasi piatto → tassa preferibile (Pizer 2002). Vicino a un tipping point il danno diventa ripido e conta il limite di quantità."],
+[3,"Cosa sono gli strumenti ibridi? Spiega il price collar californiano.",
+"Combinano prezzo e quantità: price collar, riserve di quote (MSR), carbon tax con revisione periodica (Roberts e Spence 1976; Pizer 2002).\nCalifornia: prezzo minimo nelle aste (evita il crollo e mantiene gli incentivi) e prezzo massimo/safety valve (quote extra da una riserva a prezzo fisso). Obiettivi: stabilità e continuità degli incentivi."],
+[3,"Confronta tassa, permessi e standard su certezza, costo-efficacia, innovazione, gettito.",
+"• Tassa: emissioni incerte, costo certo, costo-efficacia alta, incentivo alto e continuo, gettito sì.\n• Permessi: emissioni certe, prezzo oscillante, costo-efficacia alta, incentivo che cala se il prezzo scende, gettito solo con le aste, politicamente più facile con quote gratuite.\n• Standard: costo-efficacia bassa, poco incentivo dopo il limite, nessun gettito, evitano gli hot spot, servono molte informazioni allo Stato."],
+[3,"Il prezzo del carbonio funziona? Cosa dicono gli studi?",
+"• Döbbeling-Hildebrandt et al. (2024): 21 sistemi, riduzioni tra −5% e −21% (−4/−15% correggendo il publication bias).\n• Stechemesser et al. (2024): su circa 1.500 politiche in 41 paesi solo 63 riduzioni forti (media −19%), quasi sempre con prezzi in un buon mix.\n• IPCC AR6: ha favorito soprattutto le riduzioni a basso costo.\nFunziona, ma con effetto moderato perché prezzi e copertura sono bassi."],
+[3,"Cos'è l'EU ETS e cosa copre?",
+"Il più grande sistema di scambio di emissioni al mondo: dal 2005, 31 paesi. Copre i settori con pochi impianti e molte emissioni: centrali, raffinerie, acciaierie, cemento, vetro, carta, poi alluminio e chimica; circa 10.000 installazioni e 390 operatori aerei; il 36% delle emissioni UE nel 2022.\nRisultati 2005-2023: elettrico −45/50% (fuel switching), industria −25%, aviazione +130% fino al 2019."],
+[3,"Come funziona la conformità nell'EU ETS?",
+"Ogni anno si restituiscono quote pari alle emissioni verificate dell'anno precedente. Multa: 100 € per tonnellata non coperta, più l'obbligo di restituire la quota mancante; possibile pubblicazione dei nomi (name-and-shame). I piccoli emittenti possono uscire se soggetti a misure equivalenti."],
+[3,"Descrivi le quattro fasi dell'EU ETS.",
+"• Fase 1 (2005-07, pilota): quote quasi tutte gratuite, piani nazionali troppo generosi, prezzo a zero, niente banking.\n• Fase 2 (2008-12): aviazione inclusa; crisi e crediti internazionali → surplus di 2,1 miliardi di quote.\n• Fase 3 (2013-20): cap unico UE, riduzione lineare 1,74%.\n• Fase 4 (dal 2021, Fit for 55): −62% al 2030, fattore lineare 4,3-4,4%."],
+[3,"Grandfathering e benchmarking: differenze. Scrivi la formula delle quote gratuite.",
+"• Grandfathering: quote in base alle emissioni storiche → premia chi inquinava di più.\n• Benchmarking: quote in base a produzione ed efficienza; chi è sotto il benchmark ha quote in eccesso e vende, chi è sopra compra. È neutrale rispetto alla tecnologia.\nFree allocation = BM × HAL × CLEF (BM = media del 10% di impianti più efficienti; HAL = produzione storica mediana; CLEF = esposizione al carbon leakage)."],
+[3,"Cos'è il Linear Reduction Factor e come è cambiato?",
+"La riduzione annua fissa del tetto: 1,74% nel 2013-2020; 2,2% nel 2021-2023; 4,3% nel 2024-2027; 4,4% nel 2028-2030 → tetto a zero nel 2039. Dopo servono quote accumulate (banking) o meccanismi di rimozione."],
+[3,"Perché è nata la Market Stability Reserve e cosa fa?",
+"Dopo la crisi del 2008 la produzione cala ma l'offerta di quote è rigida: surplus oltre 2 miliardi e prezzo a 0-5 €/t, senza incentivi a investire. La MSR (introdotta nel 2015, attiva dal 2019) corregge l'offerta di quote per stabilizzare il prezzo: trasforma un cap rigido in un cap reattivo, verso un ibrido tra tassa e permessi."],
+[3,"Come è cambiata la quota di permessi all'asta? Cosa succede ai proventi in Italia?",
+"Sotto il 5% nella Fase 1, 4% in pratica nella Fase 2, oltre il 50% nella Fase 3, 57% nella Fase 4. Con Fit for 55 il 100% dei proventi deve andare a scopi climatici.\nItalia 2012-2024: circa 18 miliardi; il 50% vincolato al fondo di ammortamento dei titoli di Stato e solo il 9% (1,6 miliardi) speso."],
+[3,"Racconta l'andamento del prezzo delle quote EUA dal 2005 a oggi.",
+"• 2005-07: sovra-allocazione scoperta nel 2006, prezzo a zero.\n• 2008-12: recessione, surplus e crediti CDM/JI.\n• 2013-17: prezzo tra 4 e 8 €.\n• 2018: riforma con MSR, il prezzo triplica in pochi mesi.\n• 2020-21: crollo Covid, poi risalita con Green Deal e Fit for 55.\n• 2023-24: discesa (inverni miti, industria debole, rinnovabili).\nPrima conta il disegno dell'offerta, poi la credibilità della politica."],
+[3,"Cos'è il CBAM e in cosa si differenzia dalle quote gratuite?",
+"Meccanismo contro il carbon leakage: gli importatori UE comprano certificati con prezzo legato alla media settimanale delle EUA; il carbonio già pagato all'origine si deduce. Settori: ferro, acciaio, cemento, fertilizzanti, alluminio, idrogeno, elettricità. Reporting da ottobre 2023 a dicembre 2025, pagamento dal gennaio 2026.\nQuote gratuite: abbassano il costo interno e l'incentivo. CBAM: alza il costo esterno e lascia intatto l'incentivo interno."],
+[3,"Cos'è l'ETS2?",
+"Sistema separato per edifici e trasporto su strada, dal 2028. Controllo dei prezzi fino a fine 2029: limite di circa 45 €/t, se superato per due mesi entrano 20 milioni di quote dalla MSR. Fondo sociale per il clima: 86 miliardi per famiglie vulnerabili e piccole imprese. Entrate stimate: circa 260 miliardi nel 2027-2032."],
+[3,"Quali rischi comporta rendere l'ETS più flessibile durante la crisi energetica?",
+"Le industrie energivore pagano energia più carbonio; Italia e Polonia chiedono meno costi, la Spagna vuole un ETS forte. Rischi:\n• incentivi dinamici: gli early movers che hanno già investito perdono il vantaggio;\n• credibilità: gli investimenti verdi hanno CAPEX elevato e dipendono dalle aspettative; con una politica incerta calano investimenti e prezzo del carbonio.\nTrade-off tra sostegno a breve e transizione."],
+[3,"Cos'è il policy mix? Spiega la regola di Tinbergen e l'effetto materasso.",
+"Combinazione di strumenti: ETS, ETS2, standard auto, Innovation Fund, CBAM, Fondo sociale, etichette.\nRegola di Tinbergen: almeno uno strumento per ogni obiettivo (prezzo per le emissioni, sussidi per la ricerca, standard per l'informazione, investimenti per le reti, trasferimenti per le famiglie povere).\nEffetto materasso: politiche nazionali dentro l'ETS liberano quote che vengono usate altrove. Acemoglu et al. (2012): carbon tax + sussidi alla ricerca pulita."],
+
+// ───────── PARTE 4 ─────────
+[4,"Cos'è l'Antropocene secondo le slide di Massarutto? Quali sono le tre ipotesi sul suo inizio?",
+"Termine di Paul Crutzen per l'influenza umana crescente sugli equilibri del pianeta. Ipotesi: rivoluzione agricola del Neolitico, rivoluzione industriale, «grande accelerazione» dovuta all'aumento dei livelli di vita."],
+[4,"Quali dati descrivono «the elephant in the room»?",
+"• Quasi 8 miliardi di sapiens, prelievo di risorse cresciuto in modo esponenziale.\n• Animali allevati: 70% della biomassa degli uccelli e 96% di quella dei mammiferi.\n• Oltre il 55% delle terre emerse antropizzato, 20% parzialmente, solo 25% selvaggio (nel 1700 oltre il 95% era selvatico o semi-naturale).\nCrescono interdipendenza e vulnerabilità: serve un'etica della responsabilità."],
+[4,"Perché è difficile valutare economicamente il cambiamento climatico?",
+"1. Problema intertemporale: pesare presente e futuro (discounting, equità verticale).\n2. Problema globale con specificità locali: preferenze eterogenee (equità orizzontale).\n3. Beni non di mercato: quanto vale la biodiversità? Oggetti solo in parte commensurabili, e chi valuta influenza la valutazione."],
+[4,"Quali rischi economici individua l'NGFS (2019)?",
+"• Riscaldamento graduale – domanda: incertezza sugli investimenti, più risparmio; offerta: ore di lavoro perse, minore produttività agricola.\n• Eventi estremi – domanda: rischio alluvioni per le case, commercio interrotto; offerta: disastri, danni al capitale, risorse deviate alla ricostruzione."],
+[4,"Cosa significa la metafora della «roulette russa» sul clima?",
+"C'è circa un 5% di probabilità che, raddoppiando la CO₂, la temperatura aumenti oltre 5,2 °C. Forse non succederà, ma siamo disposti a correre il rischio? Il ragionamento si basa sulla coda della distribuzione, non sul valore medio."],
+[4,"Mitigazione e adattamento: definizioni e ordini di grandezza dei costi.",
+"• Mitigazione: ogni azione che riduce le emissioni. Circa 1.200 mld $ annui (IPCC 2014), 1-2% del PIL mondiale nel breve; il PIL può crescere con attività non impattanti.\n• Adattamento: aggiustamento al clima presente o atteso. 187 mld $ annui nel 2020-2050, 690 mld nel 2051-2100, 80% nei paesi in via di sviluppo; tante micro-azioni locali e costi che dipendono dalla mitigazione."],
+[4,"Come è cambiato il ruolo dell'ambiente nel pensiero economico?",
+"• Albori: limiti ovvi (fisiocratici, Malthus, Ricardo, Mill).\n• Lungo oblio: con la rivoluzione industriale e i neoclassici tutto è sostituibile con i prezzi; l'ambiente è un fattore come gli altri.\n• Precursori: dentro il paradigma Pigou e Coase; fuori Veblen, Leopold, Kapp, Boulding, Georgescu-Roegen, Meadows."],
+[4,"Economia dell'ambiente vs economia ecologica secondo Massarutto.",
+"• Ambiente: tradizione neoclassica e utilitaristica, microeconomia e allocazione, esternalità da internalizzare, ambiente come fattore produttivo, sostituibilità (Y = aT^α L^β K^γ), prezzi corretti.\n• Ecologica: critica anti-neoclassica, sistema e lungo periodo, l'allocazione ottima non garantisce la sostenibilità, carrying capacity, valori non sempre confrontabili, capitale naturale critico, safe minimum standard e precauzione.\nProblema: individuare CNC e soglie."],
+[4,"Cos'è il throughput e cosa implicano le leggi della termodinamica?",
+"Il flusso di materia ed energia da cui dipende il processo economico.\n• Prima legge: ciò che entra rimane o esce, i rifiuti sono inevitabili.\n• Seconda legge: l'energia utilizzabile diventa inutilizzabile; solo l'energia solare compensa nel lungo termine.\nNon c'è garanzia che l'economia riproduca le proprie basi materiali né che il progresso tecnico compensi il degrado."],
+[4,"Quali sono i quattro tipi di risorse?",
+"• Non rinnovabili: tempi di riproduzione enormi (petrolio, minerali, biodiversità, bellezze uniche).\n• Rinnovabili: si rigenerano in cicli coerenti con quelli umani (acqua, fauna e flora selvatica).\n• Prodotte: l'uomo ne influenza la riproduzione (agricoltura, allevamento, foreste).\n• Di supporto: non entrano nella produzione ma sono indispensabili (suolo, aria, paesaggio)."],
+[4,"Quali sono le 5S di Pearce e Turner?",
+"• Source: fornisce input materiali ed energetici.\n• Sink: assorbe i residui.\n• Scenery: dà utilità diretta, estetica e ricreativa.\n• Site: offre lo spazio fisico.\n• Support for life: offre le condizioni per la vita.\nGratuito non significa privo di valore."],
+[4,"Quali sono le tre condizioni di sostenibilità di Pearce e Turner (1991)? Perché ci si divide?",
+"1. Rinnovabili: sfruttamento non superiore alla rigenerazione.\n2. Non rinnovabili: sfruttamento non superiore alla sostituzione con alternative.\n3. Residui: non superiori alla capacità di metabolizzarli.\nCi si divide per l'ottimismo sulla sostituibilità di Kn con Ka e sulla definizione delle funzioni irrinunciabili (esempio: Venezia che sprofonda)."],
+[4,"Cosa sono il capitale naturale critico (CNC) e il safe minimum standard (SMS)?",
+"• CNC: capitale naturale non sostituibile, allo stato della tecnologia, da altro Kn o da Ka. Lo stesso Kn può essere critico per una funzione e non per un'altra: l'acqua in generale sì, una singola fonte no.\n• SMS: soglia massima accettabile di deterioramento, con margini di sicurezza in caso di incertezza e irreversibilità (principio di precauzione).\nEsempio: stambecchi che calano in Friuli e crescono in Valle d'Aosta."],
+[4,"Quali sono le quattro dimensioni della sostenibilità?",
+"• Ecologica: Kn continua a fornire le sue funzioni, le parti critiche sono preservate.\n• Finanziaria: i costi di gestione di Ka sono recuperati, senza scaricarli sulle generazioni successive.\n• Economica: investimenti giustificati dai benefici, risorse agli usi di maggior valore.\n• Etica: accesso equo alle funzioni di base, che non devono diventare un lusso."],
+[4,"Descrivi lo spettro degli approcci alla sostenibilità: molto debole, debole, forte, molto forte.",
+"• Molto debole: sostituibilità perfetta, regola di Hartwick, analisi costi-benefici (VAN > 0).\n• Debole: sostituibilità teorica, CNC solo temporaneo, SMS valutato con costi e benefici, valore economico totale.\n• Forte: sostituibilità da provare, Kn non diminuisce, SMS fisico, tasso di sconto zero per il CNC, precauzione.\n• Molto forte: nessuna sostituibilità, tutto il Kn è critico, crescita zero, autarchia locale e cicli chiusi."],
+[4,"Quali criteri di valutazione esistono e qual è il problema di ciascuno?",
+"• Surplus privato (WTP − C > 0): il prezzo non include tutto.\n• Surplus pubblico: si riescono a monetizzare tutte le esternalità?\n• Criterio ecologico (non perdere un CNC): come identificarlo? La tecnologia ha già superato molte trappole malthusiane.\n• Criterio etico (è giusto): chi decide? Rischio di soluzioni solo politicamente corrette."],
+[4,"Cos'è il paradosso dell'economia circolare?",
+"Se è preferibile a quella lineare, perché non la facciamo già? Perché l'analisi economica guarda ai valori marginali, non a quelli totali: l'aria è vitale ma ha valore economico zero finché non è scarsa. Il valore marginale decresce e il costo marginale cresce."],
+[4,"Reddito e ambiente: IPAT (Commoner-Ehrlich) o curva di Kuznets?",
+"• I = P × C × T: la crescita aumenta la pressione (P e C crescono, T è dubbio) → prima o poi serve lo stato stazionario.\n• Curva di Kuznets: la domanda di qualità ambientale cresce con il reddito. Vale per molti inquinanti, ma non è confermata in generale, e il miglioramento può dipendere dal trasferimento delle produzioni inquinanti nei paesi poveri."],
+[4,"Quali argomenti usano catastrofisti e ottimisti?",
+"• Pessimisti (Malthus, Meadows, Georgescu-Roegen, Daly): incertezza radicale, irreversibilità, soglie, interdipendenza, commons globali senza governo mondiale, sostituzione parziale che aumenta la vulnerabilità.\n• Ottimisti: il sistema si adatta, la storia mostra il superamento dei vincoli, riserve aumentate, la crescita finanzia l'innovazione, crescita senza più throughput (immateriale).\nDubbio: l'ambiente costruito ha già superato il livello di guardia?"],
+[4,"Quali limiti sociali e di accettabilità esistono? Cosa significano Nimby, Nimto, Banana?",
+"Oltre ai limiti fisici contano quelli sociali (Kapp, Mishan, Hirsch): la sostituzione ha effetti distributivi e culturali e la tecnologia non è neutrale.\n• Nimby: Not In My BackYard\n• Nimto: Not In My Terms of Office\n• Banana: Build it Absolutely Nowhere At No condition At all\nRagioni del rifiuto: costi localizzati e benefici diffusi, fiducia nel promotore, tipo di rischio, valore simbolico."],
+[4,"Cosa sono le istituzioni e perché sono un limite?",
+"Fattori durevoli che regolano le interazioni tra attori, allocano risorse e compongono i conflitti (governance):\n• norme informali: consuetudini, codici morali, tabù;\n• norme formali: leggi, diritti di proprietà;\n• organizzazioni: apparati politici, economici, pubblici."],
+[4,"Ottimismo e pessimismo tecnologico: quali argomenti?",
+"• Ottimismo: la tecnologia ha quasi sempre vinto, le soluzioni esistono, 8 miliardi di persone sono 8 miliardi di cervelli.\n• Pessimismo: il lieto fine non è garantito, l'antropizzazione ha un limite (lo stagno e le ninfee), la rovina può essere rapida (effetto Seneca), potremmo diventare schiavi della necessità di innovare."],
+[4,"Quali sono le conclusioni di Massarutto («E quindi?»)?",
+"• Possiamo fare qualcosa: quasi certamente sì (economia circolare come agenda condivisa).\n• L'incertezza giustifica una mitigazione aggressiva subito, più adattamento per il danno residuo.\n• Da soli non basta, ma qualcuno deve cominciare (first mover).\n• Globalmente non si fa abbastanza; l'UE è avanti.\n• Il mercato serve per innovazione e investimenti.\n• La scienza informa ma non decide (Keynes: modelli + arte di scegliere il modello)."],
+
+// ───────── PARTE 5 ─────────
+[5,"Su quali due livelli si presenta il free riding nel clima? Cosa significa self-enforcing?",
+"1. Emissioni: ogni paese inquina troppo perché il danno ricade su tutti e il costo del taglio resta suo.\n2. Accordo: firmare costa, ma i benefici arrivano anche a chi non firma.\nNon esiste un'autorità sopra gli Stati: l'accordo deve essere self-enforcing, cioè i paesi lo firmano e lo rispettano perché conviene. Il free riding si sposta dalle emissioni alla partecipazione."],
+[5,"Perché si usa la teoria dei giochi per gli accordi sul clima?",
+"Perché c'è interdipendenza strategica: il risultato dipende dalle scelte di tutti i paesi. I benefici dei tagli sono globali, i costi nazionali: ogni paese preferisce che riducano gli altri. La teoria dei giochi analizza quando conviene cooperare."],
+[5,"Cos'è il paradosso di Barrett (2003)?",
+"Gli accordi stabili si ottengono solo quando la differenza tra cooperazione e non cooperazione è piccola. Se i benefici sono modesti, la tentazione di free riding è limitata e la coalizione regge (ma serve a poco). Se i benefici sono molto grandi, cresce anche il guadagno del free rider: le coalizioni diventano instabili proprio dove servirebbero di più. Per uscirne bisogna cambiare i payoff dall'esterno."],
+[5,"Quali sono le tre leve per cambiare i payoff della cooperazione?",
+"• Co-benefici: tagliare i fossili riduce PM2.5, NOx e SO₂; i benefici per la salute restano nel paese che agisce → per questa parte il free riding scompare.\n• Issue linkage: negoziare il clima insieme a commercio e ricerca; solo chi ratifica accede ai benefici (incentivo escludibile), es. CBAM.\n• Trasferimenti internazionali: chi ha più responsabilità e capacità compensa chi ha costi più alti (Green Climate Fund)."],
+[5,"Ricostruisci le tappe principali della governance climatica internazionale.",
+"• 1972 Stoccolma: primo summit ambientale ONU, solo cornice concettuale.\n• 1987 Montreal: target vincolanti per i CFC.\n• 1988 nasce l'IPCC.\n• 1992 UNFCCC (Rio): clima bene pubblico globale, responsabilità comuni ma differenziate.\n• 1997 Kyoto: vincoli solo per i paesi industrializzati.\n• 2009 Copenhagen: obiettivo 2 °C, idea degli NDC.\n• 2015 Parigi: NDC volontari.\n• 2024 COP29 Baku: 300 mld $/anno entro il 2035.\n• 2025 COP30 Belém: triplicare la finanza per l'adattamento.\n• 2026 USA fuori da Parigi; COP31 ad Antalya."],
+[5,"Confronta il Protocollo di Kyoto e l'Accordo di Parigi.",
+"• Kyoto: top-down, obiettivi nel trattato; solo i paesi industrializzati (−5% sul 1990 nel 2008-2012); nessun obiettivo di temperatura; scambio di quote, CDM, JI; sanzioni deboli; USA mai aderenti, Canada uscito nel 2011, nessun obbligo per Cina e India.\n• Parigi: bottom-up, ogni paese sceglie il suo NDC; tutti i paesi; ben sotto 2 °C puntando a 1,5; articolo 6; trasparenza e revisione ogni 5 anni; impegni insufficienti e non vincolanti nel contenuto."],
+[5,"Quali condizioni servivano per l'entrata in vigore di Kyoto?",
+"Adottato l'11 dicembre 1997, in vigore dal 16 febbraio 2005. Servivano almeno 55 Parti della Convenzione e, tra queste, paesi dell'Annex I responsabili di almeno il 55% delle emissioni di CO₂ del 1990 del gruppo. Oggi conta 192 Parti."],
+[5,"Quali sono i tre ingranaggi dell'Accordo di Parigi e qual è la sua unica sanzione?",
+"1. NDC da rinnovare ogni cinque anni e solo verso l'alto (ratchet).\n2. Sistema comune di trasparenza e verifica.\n3. Bilancio collettivo periodico (Global Stocktake).\nSanzione: la reputazione. Impegni pubblici e verificati dovrebbero rendere costoso non rispettarli davanti agli altri governi e all'opinione pubblica."],
+[5,"Ricostruisci le uscite e i rientri degli Stati Uniti dall'Accordo di Parigi.",
+"• 2017: Trump annuncia il ritiro (economia, competitività, America First).\n• 4 novembre 2020: il ritiro entra in vigore.\n• 19 febbraio 2021: con Biden gli USA rientrano.\n• 20 gennaio 2025: nuovo ritiro deciso, in vigore dal 27 gennaio 2026.\n• Gennaio 2026: annunciato anche il ritiro dalla UNFCCC.\nMostra la fragilità degli accordi e il basso costo politico di non partecipare."],
+[5,"Perché il Protocollo di Montreal è considerato il trattato ambientale più riuscito?",
+"Strumenti: calendario di eliminazione dei CFC, divieto di commercio con chi non aderisce, Fondo multilaterale e più tempo per i paesi in via di sviluppo. Risultati: eliminato quasi il 99% delle sostanze vietate; ozono ai livelli del 1980 verso il 2040 (Artico circa 2045, Antartide circa 2066). Ratificato da tutti i paesi ONU. Kigali (2016) riduce gli HFC ed eviterebbe 0,3-0,5 °C entro il 2100."],
+[5,"Perché Montreal ha funzionato e Kyoto no?",
+"• Montreal: pochi produttori, sostituti a basso costo, benefici grandi e visibili (tumori della pelle), sanzioni commerciali.\n• Clima: emissioni in tutta l'economia, costi alti e immediati, benefici lontani e globali, nessuna sanzione."],
+[5,"Cos'è un club climatico secondo Nordhaus (2015)? Che legame ha con il CBAM?",
+"Senza sanzioni per chi resta fuori le coalizioni stabili fanno pochissimo. Proposta: i membri si impegnano su un prezzo minimo del carbonio e applicano un piccolo dazio uniforme alle importazioni dei non partecipanti.\nIl CBAM va in parte in questa direzione: il carbonio già pagato all'origine si deduce, quindi gli altri paesi sono spinti a introdurre un proprio prezzo."],
+[5,"Quali sono i due canali del carbon leakage?",
+"• Competitività: il prezzo del carbonio alza i costi di acciaio, cemento e chimica, che si spostano dove non si paga.\n• Prezzo dei combustibili: se i paesi virtuosi consumano meno petrolio e carbone, il prezzo mondiale scende e gli altri ne consumano di più."],
+[5,"Perché solo le sanzioni commerciali sono credibili?",
+"Una minaccia funziona solo se a chi punisce conviene eseguirla.\n• Sanzione climatica: inquinare di più per ritorsione danneggia anche sé stessi → nessuno ci crede.\n• Sanzione commerciale: un dazio sul carbonio porta gettito e protegge le imprese nazionali → credibile.\nIntuizione: l'atmosfera non è escludibile, il mercato sì. Montreal lo ha fatto, Kyoto no; il CBAM è una versione attenuata."],
+[5,"Bilancio dei dieci anni dopo Parigi.",
+"• Ampiezza: quasi tutti i paesi sono dentro (Kyoto non ci era mai riuscito).\n• Ambizione: NDC verso 2,4-2,8 °C, politiche in vigore verso 3 °C; il ratchet non ha ancora accelerato.\n• Il 2024 è il primo anno sopra 1,5 °C.\n• Le rinnovabili hanno rallentato i fossili ma non li hanno sostituiti (energia aggiunta).\n• Reputazione debole: USA usciti due volte.\nParigi ha risolto la partecipazione ma non l'enforcement."],
+[5,"Quali strumenti flessibili ha introdotto Kyoto e quali unità usano?",
+"Idea: non importa dove si riduce, conviene farlo dove il costo marginale è più basso.\n• Emissions Trading tra paesi: AAU (quote assegnate) e RMU (assorbimenti da suolo e foreste).\n• CDM: un paese industrializzato finanzia progetti in un paese in via di sviluppo → CER.\n• JI: un paese con obblighi finanzia progetti in un altro paese con obblighi → ERU.\nOgni unità = 1 t CO₂e; transazioni registrate e controllate dall'International Transaction Log."],
+[5,"Come funziona il Clean Development Mechanism?",
+"Doppio obiettivo: sviluppo sostenibile nel paese ospitante e obblighi di Kyoto a costo più basso. Fasi:\n1. Sviluppo: approvazione della Designated National Authority del paese ospitante, validazione indipendente, registrazione presso il CDM Executive Board.\n2. Implementazione e verifica: si dimostrano le riduzioni e vengono emessi i CER.\nProgetti: solare rurale, efficienza, rifiuti, metano. Critiche: distribuzione dei progetti e qualità dei crediti."],
+[5,"Cos'è l'addizionalità e perché è il punto debole dei crediti? Come risponde Parigi?",
+"Un credito vale solo se la riduzione non sarebbe avvenuta comunque; ma lo scenario alternativo non si osserva mai e chi chiede il credito è anche chi dichiara che senza non avrebbe fatto il progetto. Cames et al. (2016): circa l'85% dei progetti CDM aveva bassa probabilità di essere addizionale, solo il 2% alta. Un credito non addizionale è peggio di niente.\nParigi (art. 6): chi vende la riduzione la toglie dal proprio conteggio (corresponding adjustment), per evitare il doppio conteggio."],
+[5,"Ricostruisci le tappe principali della politica climatica europea.",
+"• 1990: stabilizzare la CO₂ ai livelli del 1990 entro il 2000.\n• 1997: Kyoto come blocco unico (burden-sharing); Trattato di Amsterdam.\n• 2005: EU ETS.\n• 2008: pacchetto 20-20-20.\n• 2014: −40% al 2030.\n• 2019: Green Deal.\n• 2021: Legge sul clima (−55% al 2030, neutralità al 2050) e Fit for 55.\n• 2023: Fit for 55 diventa legge.\n• 2026: −90% al 2040 vincolante.\n• 2025-26: svolta sulla competitività (ETS2 al 2028, target auto 2035 forse −90%)."],
+[5,"Green Deal, Legge europea sul clima e Fit for 55: a quale domanda risponde ciascuno?",
+"• Green Deal (2019): dove vogliamo andare? Strategia senza effetti giuridici, neutralità al 2050.\n• Legge sul clima (2021): quanto, entro quando e con quale forza giuridica? Obiettivi vincolanti, più credibilità e commitment.\n• Fit for 55 (2021, legge nel 2023): con quali strumenti, su quali settori e a carico di chi? ETS rafforzato, ETS2, CBAM, Effort Sharing, LULUCF, rinnovabili, efficienza, standard auto."],
+];
+
+const KEY="esa-flash-marks";
+let marks={};try{marks=JSON.parse(localStorage.getItem(KEY))||{}}catch(e){}
+function save(){try{localStorage.setItem(KEY,JSON.stringify(marks))}catch(e){}}
+const all=CARDS.map((c,i)=>({id:i,p:c[0],q:c[1],a:c[2]}));
+let active=new Set(Object.keys(PARTS).map(Number)),onlyR=false,order=all.map(c=>c.id),deck=[],i=0;
+const $=id=>document.getElementById(id);
+$("tot").textContent=all.length;
+const pb=$("parts");
+const allChip=document.createElement("button");allChip.className="chip on";allChip.textContent="Tutte";pb.appendChild(allChip);
+const chips={};
+for(const [k,v] of Object.entries(PARTS)){const b=document.createElement("button");b.className="chip";b.textContent=k+". "+v;b.onclick=()=>{if(active.size===5){active=new Set([+k])}else if(active.has(+k)){active.delete(+k);if(!active.size)active=new Set(Object.keys(PARTS).map(Number))}else active.add(+k);build()};chips[k]=b;pb.appendChild(b)}
+allChip.onclick=()=>{active=new Set(Object.keys(PARTS).map(Number));build()};
+function build(){
+ allChip.classList.toggle("on",active.size===5);
+ for(const k in chips)chips[k].classList.toggle("on",active.size<5&&active.has(+k));
+ $("onlyR").classList.toggle("on",onlyR);
+ deck=order.map(id=>all[id]).filter(c=>active.has(c.p)&&(!onlyR||marks[c.id]==="r"));
+ i=Math.min(i,Math.max(0,deck.length-1));show();renderList();
+}
+function show(){
+ const c=deck[i];const k=Object.values(marks).filter(x=>x==="k").length,r=Object.values(marks).filter(x=>x==="r").length;
+ $("score").textContent="La so: "+k+" · Da ripassare: "+r;
+ if(!c){$("tag").textContent="";$("q").textContent=onlyR?"Nessuna carta da ripassare in questa selezione. Ottimo!":"Nessuna carta.";$("a").hidden=true;$("pos").textContent="0 / 0";return}
+ $("pos").textContent=(i+1)+" / "+deck.length;
+ $("tag").textContent="Parte "+c.p+" · "+PARTS[c.p]+(marks[c.id]==="k"?" · ✓ la so":marks[c.id]==="r"?" · da ripassare":"");
+ $("q").textContent=c.q;$("a").textContent=c.a;$("a").hidden=true;$("hint").hidden=false;
+}
+function flip(){if(!deck[i])return;const h=$("a").hidden;$("a").hidden=!h;$("hint").hidden=h}
+function go(d){if(!deck.length)return;i=(i+d+deck.length)%deck.length;show();window.scrollTo({top:0})}
+function mark(v){const c=deck[i];if(!c)return;marks[c.id]=v;save();if(onlyR&&v==="k"){build()}else go(1)}
+$("card").onclick=flip;$("prev").onclick=()=>go(-1);$("next").onclick=()=>go(1);
+$("good").onclick=()=>mark("k");$("bad").onclick=()=>mark("r");
+$("shuffle").onclick=()=>{for(let j=order.length-1;j>0;j--){const r=Math.floor(Math.random()*(j+1));[order[j],order[r]]=[order[r],order[j]]}i=0;build()};
+$("onlyR").onclick=()=>{onlyR=!onlyR;i=0;build()};
+$("reset").onclick=()=>{marks={};save();build()};
+document.addEventListener("keydown",e=>{if($("flash").hidden)return;if(e.key===" "||e.key==="Enter"){e.preventDefault();flip()}else if(e.key==="ArrowRight")go(1);else if(e.key==="ArrowLeft")go(-1)});
+function renderList(){
+ const L=$("list");L.innerHTML="";let last=0;
+ const src=[...deck].sort((a,b)=>a.p-b.p||a.id-b.id);
+ src.forEach((c,n)=>{if(c.p!==last){const h=document.createElement("h2");h.className="part";h.textContent="Parte "+c.p+" – "+PARTS[c.p];L.appendChild(h);last=c.p}
+  const d=document.createElement("details");d.className="item";const s=document.createElement("summary");
+  s.innerHTML='<span class="n">'+(n+1)+'.</span>';s.appendChild(document.createTextNode(c.q));
+  if(marks[c.id]){const m=document.createElement("span");m.className="mark "+marks[c.id];m.textContent=marks[c.id]==="k"?"la so":"da ripassare";s.appendChild(m)}
+  const a=document.createElement("div");a.className="a";a.textContent=c.a;d.append(s,a);L.appendChild(d)});
+}
+function mode(list){$("flash").hidden=list;$("list").hidden=!list;$("mFlash").classList.toggle("on",!list);$("mList").classList.toggle("on",list)}
+$("mFlash").onclick=()=>mode(false);$("mList").onclick=()=>mode(true);
+window.addEventListener("beforeprint",()=>document.querySelectorAll("#list details").forEach(d=>d.open=true));
+build();
+if(location.search.includes("print")){mode(true);document.querySelectorAll("#list details").forEach(d=>d.open=true)}
+</script>
+</body>
+</html>
