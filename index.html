@@ -46,7 +46,7 @@ h2.part{font-size:1.05rem;margin:22px 0 10px;color:var(--acc)}
 <body>
 <header>
 <h1>Economia della Sostenibilità Ambientale</h1>
-<p class="sub">Flashcard e domande aperte · <span id="tot"></span> domande su tutte le 5 parti del riassunto. Tocca la carta per vedere la risposta.</p>
+<p class="sub">Flashcard e domande aperte · <span id="tot"></span> domande su tutte le parti del corso. Tocca la carta per vedere la risposta.</p>
 </header>
 <div class="bar" id="parts"></div>
 <div class="bar">
@@ -81,7 +81,8 @@ const PARTS = {
   2: "Sostenibilità, clima, indicatori, acqua",
   3: "Strumenti di politica ed EU ETS",
   4: "Massarutto: economia ecologica e istituzioni",
-  5: "Trattati internazionali"
+  5: "Trattati internazionali",
+  6: "Economia circolare e LCA"
 };
 
 const CARDS = [
@@ -410,8 +411,83 @@ const CARDS = [
 "• 1990: stabilizzare la CO₂ ai livelli del 1990 entro il 2000.\n• 1997: Kyoto come blocco unico (burden-sharing); Trattato di Amsterdam.\n• 2005: EU ETS.\n• 2008: pacchetto 20-20-20.\n• 2014: −40% al 2030.\n• 2019: Green Deal.\n• 2021: Legge sul clima (−55% al 2030, neutralità al 2050) e Fit for 55.\n• 2023: Fit for 55 diventa legge.\n• 2026: −90% al 2040 vincolante.\n• 2025-26: svolta sulla competitività (ETS2 al 2028, target auto 2035 forse −90%)."],
 [5,"Green Deal, Legge europea sul clima e Fit for 55: a quale domanda risponde ciascuno?",
 "• Green Deal (2019): dove vogliamo andare? Strategia senza effetti giuridici, neutralità al 2050.\n• Legge sul clima (2021): quanto, entro quando e con quale forza giuridica? Obiettivi vincolanti, più credibilità e commitment.\n• Fit for 55 (2021, legge nel 2023): con quali strumenti, su quali settori e a carico di chi? ETS rafforzato, ETS2, CBAM, Effort Sharing, LULUCF, rinnovabili, efficienza, standard auto."],
-];
 
+// ───────── PARTE 6 ─────────
+[6,"Che differenza c'è tra sostenibilità ambientale ed economia circolare?",
+"• Sostenibilità: obiettivo normativo (quale risultato vogliamo: bisogni presenti senza compromettere quelli futuri); è una condizione sugli STOCK.\n• Economia circolare: descrizione di come funzionano fisicamente i flussi di materia (materiali che rientrano invece di uscire); è un intervento sui FLUSSI.\nPer questo l'economia circolare è uno strumento: ha senso chiedersi quanto ci avvicina all'obiettivo. Non è un sinonimo di sostenibilità."],
+[6,"Chi introduce il concetto di economia circolare e su quale idea si basa?",
+"Pearce e Turner (1990): i materiali devono circolare nel sistema economico invece di diventare rifiuti. Si applica all'economia il funzionamento della natura, dove non esistono veri rifiuti e ogni scarto diventa risorsa per un altro processo."],
+[6,"L'economia circolare è solo riciclo? Quali sono le sue tre idee di fondo?",
+"No. È un modello progettato per eliminare il concetto di rifiuto, alternativo al modello lineare «estrai – produci – usa – getta». Tre idee:\n1. eliminare il concetto di rifiuto;\n2. mantenere materiali e prodotti in uso il più a lungo possibile;\n3. rigenerare la natura."],
+[6,"Confronta le definizioni di economia circolare della Ellen MacArthur Foundation e di Geissdoerfer et al. (2017).",
+"• Ellen MacArthur: «quadro di soluzioni sistemiche» contro clima, biodiversità, rifiuti, inquinamento. Tre principi guidati dal design: eliminare rifiuti e inquinamento, far circolare prodotti e materiali al massimo valore, rigenerare la natura. Focus sul prodotto: l'economia circolare inizia dal design.\n• Geissdoerfer: «sistema rigenerativo» che minimizza input, rifiuti, emissioni e dispersioni rallentando, chiudendo e restringendo i cicli. Focus sull'intero sistema economico.\nCoincidono solo se i prezzi rispecchiano i costi sociali."],
+[6,"Cosa significano rallentare, chiudere e restringere i cicli?",
+"• Rallentare: allungare la durata d'uso (manutenzione, riparazione, ricondizionamento) → riduce la velocità del flusso.\n• Chiudere: riportare il post-consumo nella produzione.\n• Restringere: usare meno materia per unità di prodotto (efficienza)."],
+[6,"Dove si colloca l'economia circolare rispetto a sviluppo sostenibile e green economy?",
+"Lo sviluppo sostenibile (Brundtland 1987) è l'obiettivo; la green economy (UNEP) è il quadro di politica economica; l'economia circolare è la parte della green economy che riguarda i flussi di materia, accanto alle altre strategie su energia, trasporti e suolo."],
+[6,"Cosa prevede il Green Deal europeo sull'economia circolare?",
+"Green Deal (COM(2019) 640): neutralità climatica al 2050. Quattro annunci: politica dei prodotti sostenibili (ridurre e riusare prima di riciclare); requisiti minimi contro i prodotti dannosi; contrasto alle dichiarazioni ambientali false; imballaggi tutti riutilizzabili o riciclabili entro il 2030. Settori: tessile, costruzioni, elettronica, plastica. Annunciato anche un Circular Economy Act per un mercato unico delle materie prime seconde."],
+[6,"Cosa dice il bilancio dei materiali e quali sono le sue due implicazioni?",
+"È l'economia-astronave di Boulding (1966): rispetto alla materia l'economia è un sistema chiuso, quindi nel lungo periodo (al netto di ciò che si accumula in edifici e beni durevoli) materia estratta = residui rilasciati.\n1. L'inquinamento non è un incidente ma la controparte necessaria del flusso di materia: le esternalità sono la regola.\n2. Agire solo sul fine vita sposta i residui da un mezzo all'altro senza ridurne la massa: bisogna ridurre l'input.\nContenuto economico della circolarità: mantenere i servizi con meno materia facendo durare i prodotti e rientrare i materiali."],
+[6,"Perché le imprese usano troppa materia vergine? Come si può correggere?",
+"L'impresa confronta p(v) del vergine con p(s) del secondario (che include raccolta, selezione, trattamento). p(v) non incorpora il danno dell'estrazione né il costo dello smaltimento a fine vita: è inferiore al costo sociale → troppa produzione, troppa materia vergine, riciclo scoraggiato.\nCorrezione: tassa t sul vergine o sussidio s al secondario. Per l'impresa sono equivalenti: conta solo p(v) + t contro p(s) − s."],
+[6,"Quali sono i cinque fallimenti di mercato dell'economia circolare?",
+"1. Esternalità non prezzate (estrazione, smaltimento) → tassa pigouviana.\n2. Informazione asimmetrica: durata e riparabilità non osservabili all'acquisto.\n3. Incentivi disallineati: chi progetta non paga il fine vita (ricade su comune e cittadini).\n4. Mercati mancanti e costi di transazione: flussi secondari eterogenei e di qualità incerta.\n5. Coordinamento e lock-in: niente impianto senza flussi garantiti e niente raccolta senza impianto."],
+[6,"Cos'è il butterfly diagram e quali cicli distingue?",
+"Schema della Ellen MacArthur Foundation a forma di farfalla:\n• ciclo biologico (a sinistra): prodotti CONSUMATI, materiali organici e biodegradabili che tornano alla biosfera;\n• ciclo tecnico (a destra): prodotti USATI, materiali non biodegradabili che devono restare nel sistema economico."],
+[6,"Elenca in ordine le fasi del ciclo tecnico con un esempio.",
+"1. Condivisione (trapano usato 13 minuti in tutta la vita → biblioteche degli attrezzi, car-sharing)\n2. Manutenzione (allunga la vita utile)\n3. Riuso (imballaggi riutilizzabili, abiti usati)\n4. Redistribuzione (stock invenduti spostati tra negozi)\n5. Ricondizionamento (smartphone riparati e rivenduti)\n6. Rigenerazione (prodotto ricostruito come nuovo; strategica in Cina per i veicoli)\n7. Riciclo (ultima risorsa, es. packaging monouso)"],
+[6,"Perché nel butterfly diagram il riciclo sta all'ultimo anello?",
+"I cerchi sono ordinati per quanto valore resta dentro. Condividere, mantenere e riparare conservano tutto il prodotto; ricondizionare e rigenerare conservano i componenti con lavoro aggiuntivo; riciclare conserva solo il valore dei materiali di base e distrugge il resto (tempo ed energia incorporati). Il riciclo è ultimo non perché inquini, ma perché è il recupero che conserva meno."],
+[6,"Che differenza c'è tra ricondizionamento e rigenerazione?",
+"• Ricondizionamento (refurbishing): ripristina il valore riparando o sostituendo componenti e aggiornando le specifiche («ripara e migliora»), es. smartphone ricondizionati.\n• Rigenerazione (remanufacturing): re-ingegnerizza prodotti e componenti fino a una condizione pari al nuovo («ricostruisce completamente»), con prestazioni uguali o superiori; richiede investimenti in macchinari."],
+[6,"Quali sono le fasi del ciclo biologico?",
+"1. Farming/collection: coltivazione e raccolta di cibo, fibre, biomassa, legno.\n2. Estrazione di materie prime biochimiche: bioplastiche, enzimi, solventi al posto delle fossili.\n3. Cascate: lo stesso materiale riusato più volte (cotone → abiti → imbottitura/isolante → compost).\n4. Digestione anaerobica: senza ossigeno si producono biogas e digestato (fertilizzante).\n5. Rigenerazione: compost e digestato restituiscono sostanza organica, azoto e fosforo al suolo."],
+[6,"Che differenza c'è tra l'obiettivo del ciclo tecnico e quello del ciclo biologico? Qual è la condizione perché il biologico funzioni?",
+"• Ciclo tecnico: impedire che il materiale esca dal sistema economico.\n• Ciclo biologico: farlo uscire nel modo giusto, restituendolo alla biosfera a una velocità che gli ecosistemi possano assorbire.\nCondizione: la separazione alla fonte. Un biodegradabile nell'indifferenziato non si rigenera; un non compostabile nell'organico ne rovina la qualità. La qualità della differenziata è un presupposto tecnico."],
+[6,"Cos'è l'LCA e a cosa serve a un'impresa?",
+"Life Cycle Assessment (analisi del ciclo di vita): metodologia standardizzata da ISO 14040 e ISO 14044 che misura gli impatti ambientali di un prodotto o servizio in tutte le fasi: estrazione, produzione, distribuzione, uso, smaltimento.\nServe a individuare le fasi critiche e dove intervenire, a supportare la progettazione e alla comunicazione esterna (immagine e reputazione)."],
+[6,"Quali sono le quattro fasi dell'LCA?",
+"1. Definizione di obiettivo e campo di applicazione (goal and scope): perché, per chi, unità funzionale, confini del sistema.\n2. Inventario (LCI): si quantificano input ed emissioni di ogni fase.\n3. Valutazione degli impatti (LCIA): i dati si collegano alle categorie di impatto.\n4. Interpretazione: hotspot e raccomandazioni.\nL'LCA è iterativa: l'interpretazione dialoga con tutte le fasi."],
+[6,"Cosa sono l'unità funzionale e i confini del sistema in un LCA?",
+"• Unità funzionale: la misura o quantità di prodotto presa come riferimento a cui legare tutti i flussi; rende confrontabili i risultati (es. 1 confezione da 250 g; 1 kg di pasta con imballaggio).\n• Confini del sistema: quali processi includere ed escludere; ogni esclusione va dichiarata e giustificata."],
+[6,"Spiega cradle to gate, cradle to grave e cradle to cradle.",
+"• Cradle to gate (dalla culla al cancello): dall'estrazione delle materie prime all'uscita dalla fabbrica; esclude uso, manutenzione, smaltimento. Usato nelle analisi industriali.\n• Cradle to grave (dalla culla alla tomba): fino allo smaltimento come rifiuto (discarica, incenerimento).\n• Cradle to cradle (dalla culla alla culla): i materiali vengono recuperati e reinseriti in nuovi cicli; logica dell'economia circolare."],
+[6,"Cosa si fa nella fase di inventario (LCI) e perché è delicata?",
+"Si raccolgono in un database quantitativo tutti i flussi di materia ed energia: input (materie prime, combustibili, elettricità, acqua, materiali ausiliari) e output (emissioni, scarichi idrici, rifiuti solidi, sottoprodotti, emissioni nel suolo).\nÈ spesso la fase più lunga e complessa: tutti gli impatti calcolati dopo dipendono dalla qualità di questi dati."],
+[6,"Quali sono i passaggi della valutazione degli impatti (LCIA)? Fai un esempio per ciascuno.",
+"• Classificazione: ogni emissione va nella sua categoria (CO₂ e metano → clima; ossidi di zolfo → acidificazione; fosfati e nitrati → eutrofizzazione).\n• Caratterizzazione: si quantifica il contributo con fattori di conversione (il metano scalda molto più della CO₂).\n• Normalizzazione: confronto con valori di riferimento (es. impatto annuo di un cittadino europeo).\n• Ponderazione: priorità diverse alle categorie.\nLe prime due sono obbligatorie, le altre facoltative."],
+[6,"Cosa sono gli hotspot di un LCA?",
+"I punti del ciclo di vita che generano gli impatti maggiori, individuati nella fase di interpretazione. Indicano dove è più efficace intervenire. Esempi: per le vaschette la produzione delle materie prime; per la pasta Barilla la coltivazione del grano duro."],
+[6,"Perché due LCA sullo stesso prodotto possono dare risultati opposti?",
+"Perché il risultato dipende dalle scelte della Fase 1:\n• unità funzionale (un sacchetto oppure il trasporto di 10 kg di spesa per 50 volte dà classifiche diverse);\n• confini del sistema (ciò che resta fuori non pesa).\nConseguenze: un LCA è valido dentro le sue ipotesi e due studi diversi possono essere entrambi corretti; un confronto usato nella comunicazione è credibile solo con regole fissate a monte e verifica di un terzo indipendente."],
+[6,"Caso Nonno Nanni: cosa confronta lo studio LCA e con quali scelte?",
+"Studio di SCF International per Latteria Montello (marchio Nonno Nanni), febbraio 2023, ISO 14040/14044. Confronta:\n• pack base: vaschetta in PET vergine + flow pack accoppiato PE/nylon;\n• pack sostenibile: vaschetta con 50-85% di r-PET + flow pack monomateriale in PP.\nUnità funzionale: 1 packaging del formato da 250 g. Confini: dalla culla al cancello più il fine vita (esclusi distribuzione e uso). Fine vita ISPRA: 55,6% riciclo, 40,7% incenerimento, 3,7% discarica."],
+[6,"Caso Nonno Nanni: quali sono i risultati principali?",
+"Carbon footprint per confezione: 49,90 g CO₂ eq (base) → 33,78 (50% r-PET, −32%) → 30,23 (85% r-PET, −39%).\nAltri indicatori (50%/85%): water scarcity −56%/−67%; risorse fossili −24%/−38%; materia vergine −15%/−44%; imballaggio a smaltimento −33%; ozono −47%/−82%.\nHotspot: produzione delle materie prime. Le analisi di sensibilità confermano il risultato; incertezza Monte Carlo circa 7%."],
+[6,"Quale criticità ha lo studio LCA Nonno Nanni secondo la docente?",
+"Non è stato sottoposto a riesame critico indipendente. La ISO 14044 lo rende obbligatorio solo per asserzioni comparative destinate al pubblico («il nostro prodotto impatta meno di un altro»). Il rapporto si mette fuori dall'obbligo dichiarando che i risultati non sono comunicati pubblicamente, ma l'obiettivo dichiarato è comunicare il piano di sostenibilità, partecipare a concorsi e creare strumenti di comunicazione per i clienti."],
+[6,"Cos'è una EPD? Quali sono le caratteristiche di quella Barilla?",
+"EPD = Environmental Product Declaration (dichiarazione ambientale di prodotto): documento pubblico e certificato che riporta i risultati LCA secondo regole fissate per la categoria.\nBarilla Selezione Oro Chef: ISO 14025; registrazione S-P-00492 sull'International EPD System; regole PCR 2010:01 per la pasta secca (CPC 2371); unità dichiarata 1 kg di pasta con imballaggio; verifica di terza parte (Bureau Veritas); dati generici sotto il 10%."],
+[6,"EPD Barilla: quali sono le macrofasi e cosa mostrano i risultati?",
+"Upstream (coltivazione del grano, imballaggi), core (molitura e produzione), downstream (distribuzione allo scaffale); cottura e fine vita calcolati a parte.\nCarbon footprint mercato italiano: 909 g CO₂ eq/kg dal campo allo scaffale (coltivazione 518, produzione 250, distribuzione 94, imballaggio 43, molitura 3).\n• Hotspot: la coltivazione del grano duro (circa il 60% del GWP).\n• La cottura pesa molto: 784 g a gas, 2.101 g elettrica; la cottura passiva riduce le emissioni del 62% (−80% sulla sola cottura).\n• Imballaggio e distribuzione pesano meno."],
+[6,"Confronta lo studio LCA Latteria Montello e l'EPD Barilla.",
+"• Tipo: rapporto LCA a uso interno vs dichiarazione registrata e pubblica (ISO 14025).\n• Chi fissa le regole: il committente nella fase di obiettivo e scopo vs le PCR del comitato tecnico dell'International EPD System.\n• Verifica: nessun riesame critico vs verificatore di terza parte (Bureau Veritas, accreditato SWEDAC), verificatore di processo e controllo dei dati durante la validità."],
+[6,"Cos'è la responsabilità estesa del produttore (EPR) e come funziona in Italia?",
+"Attribuisce al produttore la responsabilità organizzativa e finanziaria del prodotto dopo l'uso: se il costo del fine vita entra nel conto di chi progetta, la progettazione cambia. In Italia dal Decreto Ronchi (1997), tramite CONAI e i consorzi di filiera, finanziati dal contributo ambientale sugli imballaggi.\nPlastica: fino al 2017 contributo unico di 188 €/t; 3 fasce nel 2018, 5 nel 2022, 9 dal 2023; dal 1° ottobre 2026 da 51 €/t (più riciclabile) a 922 €/t (ostacola il riciclo)."],
+[6,"Confronta il contributo CONAI e la Plastic Packaging Tax britannica.",
+"• Natura: contributo privatistico a un sistema consortile vs imposta erariale.\n• Soldi: tornano al sistema (comuni, selezione, riciclo) vs bilancio dello Stato senza vincolo.\n• Calibrazione: costo netto del fine vita vs obiettivo di cambiare i comportamenti.\n• Cosa guarda: riciclabilità dopo l'uso vs contenuto riciclato adesso.\n• Forma: scala continua a nove fasce vs soglia secca (sotto il 30% di riciclato paghi tutto, dal 30% zero)."],
+[6,"Quali norme europee sul prodotto supportano l'economia circolare e quale problema risolvono?",
+"• Reg. (UE) 2024/1781 ESPR (progettazione ecocompatibile): passaporto digitale del prodotto, non prima del 2027.\n• Dir. (UE) 2024/1799 diritto alla riparazione (in Italia da ottobre 2026): riparazione obbligatoria su richiesta per lavatrici, lavastoviglie, frigoriferi, asciugatrici, smartphone, tablet.\n• Reg. (UE) 2025/40 PPWR imballaggi: riciclabilità, contenuto riciclato, divieto di alcuni formati (comando e controllo).\nRisolvono informazione asimmetrica (il passaporto rende osservabile la qualità) e coordinamento (stesso standard per tutti)."],
+[6,"Quali strumenti economici per l'economia circolare esistono in Europa?",
+"Due tipi: scoraggiare il vergine (tasse sul vergine, sulle discariche, sull'incenerimento) e sostenere il secondario (incentivi fiscali al riciclato, crediti d'imposta, riuso e riparazione, appalti verdi).\nEsempi: landfill tax alte (Regno Unito, Paesi Bassi, Svezia); deposit refund/vuoto a rendere (Paesi nordici, Germania); Plastic Packaging Tax britannica dal 2022 sugli imballaggi con meno del 30% di riciclato."],
+[6,"Quali strumenti per l'economia circolare ha l'Italia e quali problemi hanno?",
+"• Ecotassa sulle discariche: 5,17-25,82 €/t secondo la regione, ferma al 1995, molto sotto la media UE (39-46 €/t).\n• Tariffa puntuale (pay-as-you-throw).\n• Canoni sulle attività estrattive: frammentati, decide ogni regione.\n• CAM negli appalti pubblici: contenuto riciclato, durabilità, riparabilità.\n• Plastic tax (0,45 €/kg sul monouso): mai partita, ottavo rinvio al 1° luglio 2027.\nI segnali di prezzo sono spesso deboli e frammentati."],
+[6,"Quanto è circolare l'Europa? Quale indicatore si usa?",
+"Il tasso di uso circolare dei materiali: quota dei materiali usati che proviene da recupero. Nel 2024: UE 12,2% (solo un punto sopra il 2015); Paesi Bassi 32,7%, Belgio 22,7%, Italia 21,6% (5,8% nel 2004). Il Piano d'azione 2020 vuole raddoppiare il valore UE entro il 2030 (23,2%)."],
+[6,"Collega ogni fallimento di mercato dell'economia circolare al suo strumento.",
+"• Esternalità non prezzate → tasse sul vergine, ecotassa, tassa sull'incenerimento, tariffa puntuale.\n• Opzione di smaltimento non osservabile → responsabilità estesa del produttore.\n• Informazione asimmetrica su durata e riparabilità → etichette, passaporto digitale.\n• Incentivi disallineati tra progettazione e fine vita → EPR con contributo differenziato.\n• Mercati mancanti per i secondari → standard di qualità, obblighi di contenuto riciclato, CAM."],
+];
 const KEY="esa-flash-marks";
 let marks={};try{marks=JSON.parse(localStorage.getItem(KEY))||{}}catch(e){}
 function save(){try{localStorage.setItem(KEY,JSON.stringify(marks))}catch(e){}}
@@ -422,10 +498,10 @@ $("tot").textContent=all.length;
 const pb=$("parts");
 const allChip=document.createElement("button");allChip.className="chip on";allChip.textContent="Tutte";pb.appendChild(allChip);
 const chips={};
-for(const [k,v] of Object.entries(PARTS)){const b=document.createElement("button");b.className="chip";b.textContent=k+". "+v;b.onclick=()=>{if(active.size===5){active=new Set([+k])}else if(active.has(+k)){active.delete(+k);if(!active.size)active=new Set(Object.keys(PARTS).map(Number))}else active.add(+k);build()};chips[k]=b;pb.appendChild(b)}
+for(const [k,v] of Object.entries(PARTS)){const b=document.createElement("button");b.className="chip";b.textContent=k+". "+v;b.onclick=()=>{if(active.size===Object.keys(PARTS).length){active=new Set([+k])}else if(active.has(+k)){active.delete(+k);if(!active.size)active=new Set(Object.keys(PARTS).map(Number))}else active.add(+k);build()};chips[k]=b;pb.appendChild(b)}
 allChip.onclick=()=>{active=new Set(Object.keys(PARTS).map(Number));build()};
 function build(){
- allChip.classList.toggle("on",active.size===5);
+ allChip.classList.toggle("on",active.size===Object.keys(PARTS).length);
  for(const k in chips)chips[k].classList.toggle("on",active.size<5&&active.has(+k));
  $("onlyR").classList.toggle("on",onlyR);
  deck=order.map(id=>all[id]).filter(c=>active.has(c.p)&&(!onlyR||marks[c.id]==="r"));
@@ -460,6 +536,7 @@ function renderList(){
 function mode(list){$("flash").hidden=list;$("list").hidden=!list;$("mFlash").classList.toggle("on",!list);$("mList").classList.toggle("on",list)}
 $("mFlash").onclick=()=>mode(false);$("mList").onclick=()=>mode(true);
 window.addEventListener("beforeprint",()=>document.querySelectorAll("#list details").forEach(d=>d.open=true));
+const pp=new URLSearchParams(location.search).get("p");if(pp)active=new Set(pp.split(",").map(Number));
 build();
 if(location.search.includes("print")){mode(true);document.querySelectorAll("#list details").forEach(d=>d.open=true)}
 </script>
